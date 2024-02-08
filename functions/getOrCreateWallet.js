@@ -16,10 +16,8 @@ exports = async function(request, response){
       throw new Error(`Request body missing data.`);
     }
 
-    const valid = await context.functions.execute("validateCPF", body.cpf)
-
-    if(!valid) {
-      throw new Error("Invalid CPF.");
+    if(!(await context.functions.execute("validateCPF", body.cpf))) {
+      throw new Error("CPF is invalid.");
     }
 
     const mongodb = context.services.get("mongodb-atlas");
