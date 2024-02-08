@@ -10,7 +10,10 @@ exports = async function(request, response){
 
     const client = await mongodb.db("clients").collection("clients").findOne(
         { "cpf": body.cpf });
-    return client;
+
+    const wallet = await mongodb.db("clients").collection("wallets").findOne(
+        { "client_id": client._id });
+    return wallet;
   } catch (error) {
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "error": { "message": error.message }}));
