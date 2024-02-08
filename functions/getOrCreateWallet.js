@@ -1,12 +1,16 @@
-exports = async function(arg){
-  if(arg.body === undefined) {
-    // sendErrorResponse(response, 400, "Requisição precisa ter um body.");
-    return { error: "Consulta inválida." };
+exports = async function(request, response){
+  try {
+    if (request.body === undefined) {
+      throw new Error(`Request body was not defined.`);
+    }
+
+    const body = JSON.parse(await request.body.text());
+
+    return body;
+  } catch (error) {
+    response.setStatusCode(400);
+    response.setBody(error.message);
   }
-
-  const body = JSON.parse(await arg.body.text());
-
-  return body;
   // // This default function will get a value and find a document in MongoDB
   // // To see plenty more examples of what you can do with functions see: 
   // // https://www.mongodb.com/docs/atlas/app-services/functions/
