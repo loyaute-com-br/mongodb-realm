@@ -24,7 +24,7 @@ exports = async function(request, response){
     }
 
     response.setStatusCode(200);
-    response.setBody(JSON.stringify(wallet));
+    response.setBody(JSON.stringify({ "name": client.first_name, "balance": wallet.balance }));
     return;
   } catch (error) {
     response.setStatusCode(400);
