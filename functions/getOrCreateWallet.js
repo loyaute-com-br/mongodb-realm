@@ -9,7 +9,7 @@ exports = async function(request, response){
     return body;
   } catch (error) {
     response.setStatusCode(400);
-    response.setBody(JSON.stringify({"errorMessage": error.message}));
+    response.setBody(JSON.stringify({ "error": { "message": error.message }}));
   }
   // // This default function will get a value and find a document in MongoDB
   // // To see plenty more examples of what you can do with functions see: 
