@@ -12,7 +12,9 @@ exports = async function(request, response){
         { "cpf": body.cpf });
 
     if (!client) {
-      throw new Error(`Client with CPF ${body.cpf} not found.`);
+      response.setStatusCode(404);
+      response.setBody(JSON.stringify({ "error": { "message": `Client with CPF ${body.cpf} not found.` }}));
+      return;
     }
 
     const wallet = await mongodb.db("clients").collection("wallets").findOne(
