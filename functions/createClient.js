@@ -1,38 +1,55 @@
-exports = async function(arg){
-  // This default function will get a value and find a document in MongoDB
-  // To see plenty more examples of what you can do with functions see: 
-  // https://www.mongodb.com/docs/atlas/app-services/functions/
+function splitName(name) {
+  const firstSpaceIndex = name.indexOf(' ');
 
-  // Find the name of the MongoDB service you want to use (see "Linked Data Sources" tab)
-  var serviceName = "mongodb-atlas";
-
-  // Update these to reflect your db/collection
-  var dbName = "db_name";
-  var collName = "coll_name";
-
-  // Get a collection from the context
-  var collection = context.services.get(serviceName).db(dbName).collection(collName);
-
-  var findResult;
-  try {
-    // Get a value from the context (see "Values" tab)
-    // Update this to reflect your value's name.
-    var valueName = "value_name";
-    var value = context.values.get(valueName);
-
-    // Execute a FindOne in MongoDB 
-    findResult = await collection.findOne(
-      { owner_id: context.user.id, "fieldName": value, "argField": arg},
-    );
-
-  } catch(err) {
-    console.log("Error occurred while executing findOne:", err.message);
-
-    return { error: err.message };
+  if (firstSpaceIndex !== -1) {
+    const firstName = name.substring(0, firstSpaceIndex);
+    const surname = name.substring(firstSpaceIndex + 1);
+    return { firstName: firstName, surname: surname };
+  } else {
+    return { firstName: name, surname: '' };
   }
+}
 
-  // To call other named functions:
-  // var result = context.functions.execute("function_name", arg1, arg2);
+exports = async function(request, response){
+  try {
+    if (request.body === undefined) {
+      throw new Error(`Request body was not defined.`);
+    }
 
-  return { result: findResult };
+    if (!context.user) {
+      response.setStatusCode(401);
+      response.setBody(JSON.stringify({ "error": { "message": `User not authenticated.` }}));
+      return;
+    }
+
+    // if (!context.user.custom_data.role.includes("ADMIN")) {
+    //   response.setStatusCode(401);
+    //   response.setBody(JSON.stringify({ "error": { "message": `User not authorized.` }}));
+    //   return;
+    // }
+
+    const body = JSON.parse(await request.body.text());
+
+    if(!body.cpf || !body.name || !body.phone) {
+      throw new Error(`Request body missing data.`);
+    }
+
+    const mongodb = context.services.get("mongodb-atlas");
+
+    const { firstName, surname } = splitName(body.name);
+
+    let doc = {
+      cpf: body.cpf,
+      first_name: firstName,
+      surname: surname,
+      phone: body.phone
+    }
+
+    await mongodb.db("clients").collection("clients").insertOne(doc);
+
+    response.setStatusCode(201);
+  } catch (error) {
+    response.setStatusCode(400);
+    response.setBody(JSON.stringify({ "error": { "message": error.message }}));
+  }
 };
