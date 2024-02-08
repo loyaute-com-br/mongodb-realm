@@ -1,38 +1,33 @@
-exports = async function(arg){
-  // This default function will get a value and find a document in MongoDB
-  // To see plenty more examples of what you can do with functions see: 
-  // https://www.mongodb.com/docs/atlas/app-services/functions/
+exports = async function validateCPF(cpf) {
+  // Remove all non-numeric characters (except digits) from the CPF string
+  cpf = cpf.replace(/[^\d]+/g,'');
 
-  // Find the name of the MongoDB service you want to use (see "Linked Data Sources" tab)
-  var serviceName = "mongodb-atlas";
-
-  // Update these to reflect your db/collection
-  var dbName = "db_name";
-  var collName = "coll_name";
-
-  // Get a collection from the context
-  var collection = context.services.get(serviceName).db(dbName).collection(collName);
-
-  var findResult;
-  try {
-    // Get a value from the context (see "Values" tab)
-    // Update this to reflect your value's name.
-    var valueName = "value_name";
-    var value = context.values.get(valueName);
-
-    // Execute a FindOne in MongoDB 
-    findResult = await collection.findOne(
-      { owner_id: context.user.id, "fieldName": value, "argField": arg},
-    );
-
-  } catch(err) {
-    console.log("Error occurred while executing findOne:", err.message);
-
-    return { error: err.message };
+  // Check if the CPF has the correct length (11 digits)
+  if (cpf.length !== 11) {
+    return false;
   }
 
-  // To call other named functions:
-  // var result = context.functions.execute("function_name", arg1, arg2);
+  // Check if all digits of the CPF are equal
+  if (/^(\d)\1+$/.test(cpf)) {
+    return false;
+  }
 
-  return { result: findResult };
-};
+  // Calculate the first verification digit using the CPF validation algorithm
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cpf.charAt(i)) * (10 - i);
+  }
+  let remainder = sum % 11;
+  let digit1 = (remainder < 2) ? 0 : 11 - remainder;
+
+  // Calculate the second verification digit using the same algorithm
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cpf.charAt(i)) * (11 - i);
+  }
+  remainder = sum % 11;
+  let digit2 = (remainder < 2) ? 0 : 11 - remainder;
+
+  // Check if the calculated verification digits match the last two digits of the provided CPF
+  return ((digit1 == cpf.charAt(9)) && (digit2 == cpf.charAt(10)));
+}
