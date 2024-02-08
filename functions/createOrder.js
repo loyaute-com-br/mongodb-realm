@@ -42,6 +42,7 @@ exports = async function(request, response){
       return;
     }
 
+    return wallet;
     // Calculate new cashback amount
     let newCashback;
 
