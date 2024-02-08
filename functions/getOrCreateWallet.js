@@ -1,5 +1,4 @@
 exports = async function(request, response){
-  return context.user;
   try {
     if (request.body === undefined) {
       throw new Error(`Request body was not defined.`);
