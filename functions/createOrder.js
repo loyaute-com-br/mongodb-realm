@@ -17,6 +17,7 @@ exports = async function(request, response){
     // }
 
     const body = JSON.parse(await request.body.text());
+    return body;
 
     if(!body.cpf || !body.value || !body.using_cashback) {
       throw new Error(`Request body missing data.`);
