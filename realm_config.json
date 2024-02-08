@@ -1,0 +1,7 @@
+{
+    "app_id": "application-wsmsd",
+    "config_version": 20210101,
+    "name": "Application",
+    "provider_region": "aws-sa-east-1",
+    "deployment_model": "LOCAL"
+}
