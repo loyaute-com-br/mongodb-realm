@@ -1,23 +1,29 @@
 exports = async function(request, response){
   try {
     if (request.body === undefined) {
-      throw new Error(`Request body was not defined.`);
+      response.setStatusCode(400);
+      response.setBody(JSON.stringify({ "error": "MISSING_DATA" }));
+      return;
     }
 
     if (!context.user || !context.user.custom_data.roles.includes("seller")) {
       response.setStatusCode(401);
-      response.setBody(JSON.stringify({ "error": { "message": "Unauthorized access." }}));
+      response.setBody(JSON.stringify({ "error": "UNAUTHORIZED_ACCESS" }));
       return;
     }
 
     const body = JSON.parse(await request.body.text());
 
-    if(body.cpf == undefined) {
-      throw new Error(`Request body missing data.`);
+    if (body.cpf === undefined) {
+      response.setStatusCode(400);
+      response.setBody(JSON.stringify({ "error": "MISSING_DATA", "message": "CPF is missing in the request body." }));
+      return;
     }
 
     if(!(await context.functions.execute("validateCPF", body.cpf))) {
-      throw new Error("CPF is invalid.");
+      response.setStatusCode(400);
+      response.setBody(JSON.stringify({ "error": "INVALID_CPF" }));
+      return;
     }
 
     const mongodb = context.services.get("mongodb-atlas");
@@ -26,7 +32,7 @@ exports = async function(request, response){
 
     if (!client) {
       response.setStatusCode(404);
-      response.setBody(JSON.stringify({ "error": { "message": `Client with CPF ${body.cpf} not found.` }}));
+      response.setBody(JSON.stringify({ "error": "CLIENT_NOT_FOUND" }));
       return;
     }
 
@@ -51,6 +57,6 @@ exports = async function(request, response){
     response.setBody(JSON.stringify({ "name": client.first_name, "balance": balance }));
   } catch (error) {
     response.setStatusCode(400);
-    response.setBody(JSON.stringify({ "error": { "message": error.message }}));
+    response.setBody(JSON.stringify({ "error": "ERROR", "message": error.message }));
   }
 };
