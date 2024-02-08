@@ -3,5 +3,10 @@
         "name": "getOrCreateWallet",
         "private": false,
         "disable_arg_logs": true
+    },
+    {
+        "name": "createClient",
+        "private": false,
+        "disable_arg_logs": true
     }
 ]
