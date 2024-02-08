@@ -13,7 +13,7 @@
     {
         "http_method": "POST",
         "route": "/client",
-        "function_name": "getOrCreateWallet",
+        "function_name": "createClient",
         "validation_method": "NO_VALIDATION",
         "respond_result": true,
         "fetch_custom_user_data": false,
