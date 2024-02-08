@@ -17,7 +17,6 @@ exports = async function(request, response){
     // }
 
     const body = JSON.parse(await request.body.text());
-    return body;
 
     if(!body.cpf || !body.value || !body.using_cashback) {
       throw new Error(`Request body missing data.`);
@@ -46,13 +45,13 @@ exports = async function(request, response){
     // Calculate new cashback amount
     let newCashback;
 
-    let requestAmount = body.value;
+    let requestAmount = parseFloat(body.value);
 
     if(body.using_cashback === true) {
       newCashback = 0;
       requestAmount = requestAmount - wallet.balance;
     } else {
-      newCashback = wallet.balance + ((body.value) * 0.5);
+      newCashback = wallet.balance + ((parseFloat(body.value)) * 0.5);
     }
 
     // Update wallet
