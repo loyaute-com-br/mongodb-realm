@@ -1,0 +1,19 @@
+{
+    "database": "establishments",
+    "collection": "users",
+    "roles": [
+        {
+            "name": "denyAllAccess",
+            "apply_when": {},
+            "document_filters": {
+                "read": false,
+                "write": false
+            },
+            "insert": false,
+            "delete": false,
+            "search": false,
+            "read": false,
+            "write": false
+        }
+    ]
+}
