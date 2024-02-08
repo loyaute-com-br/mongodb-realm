@@ -10,7 +10,6 @@ exports = async function(request, response){
       return;
     }
 
-    return context.user;
     // if (!context.user.custom_data.role.includes("ADMIN")) {
     //   response.setStatusCode(401);
     //   response.setBody(JSON.stringify({ "error": { "message": `User not authorized.` }}));
