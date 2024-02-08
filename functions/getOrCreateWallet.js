@@ -6,7 +6,11 @@ exports = async function(request, response){
 
     const body = JSON.parse(await request.body.text());
 
-    return body;
+    const mongodb = context.services.get("mongodb-atlas");
+
+    const client = await mongodb.db("clients").collection("clients").findOne(
+        { "cpf": body.cpf });
+    return client;
   } catch (error) {
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "error": { "message": error.message }}));
