@@ -24,7 +24,7 @@ exports = async function(request, response){
 
     console.log("Searching for wallet for client with ID:", client._id);
     const wallet = await mongodb.db("clients").collection("wallets").findOne(
-        { "client_id": client._id });
+        { "client_id": new BSON.ObjectId(client._id) });
 
     console.log("Found wallet:", wallet);
 
