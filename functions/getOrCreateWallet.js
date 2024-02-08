@@ -1,8 +1,19 @@
 exports = async function(request, response){
-  return context.user;
   try {
     if (request.body === undefined) {
       throw new Error(`Request body was not defined.`);
+    }
+
+    if (!context.user) {
+      response.setStatusCode(401);
+      response.setBody(JSON.stringify({ "error": { "message": `User not authenticated.` }}));
+      return;
+    }
+
+    if (!context.user.custom_data.role.includes("ADMIN")) {
+      response.setStatusCode(401);
+      response.setBody(JSON.stringify({ "error": { "message": `User not authorized.` }}));
+      return;
     }
 
     const body = JSON.parse(await request.body.text());
@@ -19,7 +30,7 @@ exports = async function(request, response){
     }
 
     const wallet = await mongodb.db("clients").collection("wallets").findOne(
-        { "client_id": client._id });
+        { "client_id": client._id, "establishment_id": context.user.custom_data.establishment_id });
 
     if (!wallet) {
       // create wallet
