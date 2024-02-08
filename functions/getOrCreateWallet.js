@@ -32,14 +32,24 @@ exports = async function(request, response){
     const wallet = await mongodb.db("clients").collection("wallets").findOne(
         { "client_id": client._id, "establishment_id": context.user.custom_data.establishment_id });
 
+    let balance = 0;
+
     if (!wallet) {
       // create wallet
-      return;
+      let doc = {
+        client_id: client._id,
+        establishment_id: context.user.custom_data.establishment_id,
+        balance: balance,
+      }
+
+      await mongodb.db("clients").collection("wallets").insertOne(doc);
+      response.setStatusCode(201);
+    } else {
+      balance = wallet.balance;
+      response.setStatusCode(200);
     }
 
-    response.setStatusCode(200);
-    response.setBody(JSON.stringify({ "name": client.first_name, "balance": wallet.balance }));
-    return;
+    response.setBody(JSON.stringify({ "name": client.first_name, "balance": balance }));
   } catch (error) {
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "error": { "message": error.message }}));
