@@ -1,18 +1,13 @@
 exports = async function(request, response){
   try {
-    // if (request.body === undefined) {
-    //   throw new Error(`Request body was not defined.`);
-    // }
-
-    // const body = JSON.parse(await request.body.text());
-
-    const body = {
-      "cpf": "45639157852"
+    if (request.body === undefined) {
+      throw new Error(`Request body was not defined.`);
     }
+
+    const body = JSON.parse(await request.body.text());
 
     const mongodb = context.services.get("mongodb-atlas");
 
-    console.log("Searching for client with CPF:", body.cpf);
     const client = await mongodb.db("clients").collection("clients").findOne(
         { "cpf": body.cpf });
 
@@ -20,18 +15,19 @@ exports = async function(request, response){
       throw new Error(`Client with CPF ${body.cpf} not found.`);
     }
 
-    console.log("Found client:", client);
-
-    console.log("Searching for wallet for client with ID:", client._id);
     const wallet = await mongodb.db("clients").collection("wallets").findOne(
         { "client_id": client._id });
 
-    console.log("Found wallet:", wallet);
+    if (!wallet) {
+      // create wallet
+      return;
+    }
 
-    return wallet;
+    response.setStatusCode(200);
+    response.setBody(wallet);
+    return;
   } catch (error) {
-    console.error("Error:", error);
-    // response.setStatusCode(400);
-    // response.setBody(JSON.stringify({ "error": { "message": error.message }}));
+    response.setStatusCode(400);
+    response.setBody(JSON.stringify({ "error": { "message": error.message }}));
   }
 };
