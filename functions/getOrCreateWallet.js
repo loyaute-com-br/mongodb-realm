@@ -2,13 +2,13 @@ exports = async function(request, response){
   try {
     if (request.body === undefined) {
       response.setStatusCode(400);
-      response.setBody(JSON.stringify({ "error": "MISSING_DATA" }));
+      response.setBody(JSON.stringify({ "errorType": "MISSING_DATA" }));
       return;
     }
 
     if (!context.user || !context.user.custom_data.roles.includes("seller")) {
       response.setStatusCode(401);
-      response.setBody(JSON.stringify({ "error": "UNAUTHORIZED_ACCESS" }));
+      response.setBody(JSON.stringify({ "errorType": "UNAUTHORIZED_ACCESS" }));
       return;
     }
 
@@ -16,13 +16,13 @@ exports = async function(request, response){
 
     if (body.cpf === undefined) {
       response.setStatusCode(400);
-      response.setBody(JSON.stringify({ "error": "MISSING_DATA", "message": "CPF is missing in the request body." }));
+      response.setBody(JSON.stringify({ "errorType": "MISSING_DATA", "message": "CPF is missing in the request body." }));
       return;
     }
 
     if(!(await context.functions.execute("validateCPF", body.cpf))) {
       response.setStatusCode(400);
-      response.setBody(JSON.stringify({ "error": "INVALID_CPF" }));
+      response.setBody(JSON.stringify({ "errorType": "INVALID_CPF" }));
       return;
     }
 
@@ -32,7 +32,7 @@ exports = async function(request, response){
 
     if (!client) {
       response.setStatusCode(404);
-      response.setBody(JSON.stringify({ "error": "CLIENT_NOT_FOUND" }));
+      response.setBody(JSON.stringify({ "errorType": "CLIENT_NOT_FOUND" }));
       return;
     }
 
@@ -57,6 +57,6 @@ exports = async function(request, response){
     response.setBody(JSON.stringify({ "name": client.first_name, "balance": balance }));
   } catch (error) {
     response.setStatusCode(400);
-    response.setBody(JSON.stringify({ "error": "ERROR", "message": error.message }));
+    response.setBody(JSON.stringify({ "errorType": "ERROR", "message": error.message }));
   }
 };
