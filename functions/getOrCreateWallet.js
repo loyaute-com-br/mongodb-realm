@@ -16,10 +16,9 @@ exports = async function(request, response){
       throw new Error(`Request body missing data.`);
     }
 
-    const valid = context.functions.execute("validateCPF", body.cpf)
-    return {"cpf_valid": valid};
+    const valid = await context.functions.execute("validateCPF", body.cpf)
 
-    if(!context.functions.execute("validateCPF", body.cpf)) {
+    if(!valid) {
       throw new Error("Invalid CPF.");
     }
 
