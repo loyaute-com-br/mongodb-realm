@@ -22,10 +22,11 @@ exports = async function(request, response){
 
     console.log("Found client:", client);
 
+    console.log("Searching for wallet for client with ID:", client._id);
     const wallet = await mongodb.db("clients").collection("wallets").findOne(
         { "client_id": client._id });
 
-    console.log("Wallet for client:", wallet);
+    console.log("Found wallet:", wallet);
 
     return wallet;
   } catch (error) {
