@@ -1,6 +1,6 @@
 [
     {
-        "name": "findWallet",
+        "name": "getOrCreateWallet",
         "private": false,
         "disable_arg_logs": true
     }
