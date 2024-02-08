@@ -10,11 +10,12 @@ exports = async function(request, response){
       return;
     }
 
-    if (!context.user.custom_data.role.includes("ADMIN")) {
-      response.setStatusCode(401);
-      response.setBody(JSON.stringify({ "error": { "message": `User not authorized.` }}));
-      return;
-    }
+    return context.user;
+    // if (!context.user.custom_data.role.includes("ADMIN")) {
+    //   response.setStatusCode(401);
+    //   response.setBody(JSON.stringify({ "error": { "message": `User not authorized.` }}));
+    //   return;
+    // }
 
     const body = JSON.parse(await request.body.text());
 
