@@ -3,5 +3,15 @@
         "name": "api-key",
         "type": "api-key",
         "disabled": true
+    },
+    "local-userpass": {
+        "name": "local-userpass",
+        "type": "local-userpass",
+        "disabled": false,
+        "config": {
+            "autoConfirm": true,
+            "resetPasswordUrl": "http://apple.com",
+            "runConfirmationFunction": false
+        }
     }
 }
