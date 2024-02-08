@@ -1,57 +1,36 @@
 exports = async function(request, response){
   try {
-    if (request.body === undefined) {
-      throw new Error(`Request body was not defined.`);
-    }
+    // if (request.body === undefined) {
+    //   throw new Error(`Request body was not defined.`);
+    // }
 
-    const body = JSON.parse(await request.body.text());
+    // const body = JSON.parse(await request.body.text());
+
+    const body = {
+      "cpf": "45639157852"
+    }
 
     const mongodb = context.services.get("mongodb-atlas");
 
+    console.log("Searching for client with CPF:", body.cpf);
     const client = await mongodb.db("clients").collection("clients").findOne(
         { "cpf": body.cpf });
 
+    if (!client) {
+      throw new Error(`Client with CPF ${body.cpf} not found.`);
+    }
+
+    console.log("Found client:", client);
+
     const wallet = await mongodb.db("clients").collection("wallets").findOne(
         { "client_id": client._id });
+
+    console.log("Wallet for client:", wallet);
+
     return wallet;
   } catch (error) {
+    console.error("Error:", error);
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "error": { "message": error.message }}));
   }
-  // // This default function will get a value and find a document in MongoDB
-  // // To see plenty more examples of what you can do with functions see: 
-  // // https://www.mongodb.com/docs/atlas/app-services/functions/
-
-  // // Find the name of the MongoDB service you want to use (see "Linked Data Sources" tab)
-  // var serviceName = "mongodb-atlas";
-
-  // // Update these to reflect your db/collection
-  // var dbName = "db_name";
-  // var collName = "coll_name";
-
-  // // Get a collection from the context
-  // var collection = context.services.get(serviceName).db(dbName).collection(collName);
-
-  // var findResult;
-  // try {
-  //   // Get a value from the context (see "Values" tab)
-  //   // Update this to reflect your value's name.
-  //   var valueName = "value_name";
-  //   var value = context.values.get(valueName);
-
-  //   // Execute a FindOne in MongoDB 
-  //   findResult = await collection.findOne(
-  //     { owner_id: context.user.id, "fieldName": value, "argField": arg},
-  //   );
-
-  // } catch(err) {
-  //   console.log("Error occurred while executing findOne:", err.message);
-
-  //   return { error: err.message };
-  // }
-
-  // // To call other named functions:
-  // // var result = context.functions.execute("function_name", arg1, arg2);
-
-  // return { result: findResult };
 };
