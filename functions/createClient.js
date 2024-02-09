@@ -22,7 +22,7 @@ exports = async function(request, response){
       return;
     }
 
-    if (!context.user.custom_data.roles.includes("SELLER")) {
+    if (!context.user.custom_data.roles.includes("seller")) {
       response.setStatusCode(401);
       response.setBody(JSON.stringify({ "error": { "message": `User not authorized.` }}));
       return;
