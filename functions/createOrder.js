@@ -10,11 +10,11 @@ exports = async function(request, response){
       return;
     }
 
-    // if (!context.user.custom_data.roles.includes("seller")) {
-    //   response.setStatusCode(401);
-    //   response.setBody(JSON.stringify({ "error": { "message": `User not authorized.` }}));
-    //   return;
-    // }
+    if (!context.user.custom_data.roles.includes("seller")) {
+      response.setStatusCode(401);
+      response.setBody(JSON.stringify({ "error": { "message": `User not authorized.` }}));
+      return;
+    }
 
     const body = JSON.parse(await request.body.text());
 
@@ -51,7 +51,7 @@ exports = async function(request, response){
       newCashback = 0;
       requestAmount = requestAmount - wallet.balance;
     } else {
-      newCashback = wallet.balance + ((parseFloat(body.value)) * 0.05);
+      newCashback = wallet.balance + ((parseFloat(body.value)) * 0.5);
     }
 
     // Update wallet
