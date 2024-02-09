@@ -88,10 +88,10 @@ exports = async function(request, response){
         "establishment_id": wallet.establishment_id,
         "timestamp": new Date(),
         "balance": {
-          "new": updatedWallet.balance,
+          // "new": updatedWallet.balance,
           "old": wallet.balance,
         },
-        "difference": (updatedWallet.balance - wallet.balance)
+        // "difference": (updatedWallet.balance - wallet.balance)
       }
 
       await database.collection("transactions").insertOne(doc);
