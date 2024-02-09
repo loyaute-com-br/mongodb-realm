@@ -3,6 +3,13 @@
     "type": "mongodb-atlas",
     "config": {
         "clusterName": "Cluster0",
+        "namespacePreimageConfigs": [
+            {
+                "dbName": "clients",
+                "collectionName": "wallets",
+                "recordPreimages": true
+            }
+        ],
         "readPreference": "primary",
         "wireProtocolEnabled": false
     },
