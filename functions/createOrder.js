@@ -51,7 +51,7 @@ exports = async function(request, response){
       newCashback = 0;
       requestAmount = requestAmount - wallet.balance;
     } else {
-      newCashback = wallet.balance + ((parseFloat(body.value)) * 0.5);
+      newCashback = wallet.balance + ((parseFloat(body.value)) * 0.05);
     }
 
     // Update wallet
