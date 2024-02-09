@@ -48,8 +48,8 @@ exports = async function(request, response){
     let requestAmount = parseFloat(body.value);
 
     if(body.using_cashback === true) {
-      newCashback = 0;
       requestAmount = requestAmount - wallet.balance;
+      newCashback = requestAmount * 0.05;
     } else {
       newCashback = wallet.balance + ((parseFloat(body.value)) * 0.05);
     }
