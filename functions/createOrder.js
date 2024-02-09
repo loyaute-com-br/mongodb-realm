@@ -1,4 +1,8 @@
 exports = async function(request, response){
+  const mongodb = context.services.get("mongodb-atlas");
+
+  // Iniciar a transação
+  const session = mongodb.startSession();
   try {
     if (request.body === undefined) {
       throw new Error(`Request body was not defined.`);
@@ -21,8 +25,6 @@ exports = async function(request, response){
     if(!body.cpf || !body.value || body.using_cashback == undefined) {
       throw new Error(`Request body missing data.`);
     }
-
-    const mongodb = context.services.get("mongodb-atlas");
 
     const client = await mongodb.db("clients").collection("clients").findOne(
         { "cpf": body.cpf });
@@ -67,8 +69,6 @@ exports = async function(request, response){
 
     const database = mongodb.db("clients");
 
-    // Iniciar a transação
-    const session = mongodb.startSession();
     const transactionOptions = {
       readPreference: "primary",
       readConcern: { level: "local" },
