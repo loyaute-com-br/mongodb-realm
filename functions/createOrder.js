@@ -68,7 +68,7 @@ exports = async function(request, response){
     const database = mongodb.db("clients");
 
     // Iniciar a transação
-    const session = database.startSession();
+    const session = database.getMongo().startSession();
     const transactionOptions = {
       readPreference: "primary",
       readConcern: { level: "local" },
