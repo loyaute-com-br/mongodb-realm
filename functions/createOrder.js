@@ -65,12 +65,52 @@ exports = async function(request, response){
       }
     };
 
-    await mongodb.db("clients").collection("wallets").updateOne(filter, update);
+    const database = mongodb.db("clients");
+
+    // Iniciar a transação
+    const session = client.startSession();
+    const transactionOptions = {
+      readPreference: "primary",
+      readConcern: { level: "local" },
+      writeConcern: { w: "majority" }
+    };
+
+    await session.withTransaction(async () => {
+      // Executar operações dentro da transação
+      await database.collection("wallets").updateOne(filter, update);
+
+      const updatedWallet = await mongodb.db("clients").collection("wallets").findOne(
+          { "wallet_id": wallet._id });
+
+      let doc = {
+        "wallet_id": wallet._id,
+        "client_id": client._id,
+        "establishment_id": wallet.establishment_id,
+        "timestamp": new Date(),
+        "balance": {
+          "new": updatedWallet.balance,
+          "old": wallet.balance,
+        },
+        "difference": (updatedWallet.balance - wallet.balance)
+      }
+
+      await database.collection("transactions").insertOne(doc);
+    }, transactionOptions);
+
+    // Comitar a transação
+    await session.commitTransaction();
+
+    // await insert transaction
 
     response.setStatusCode(201);
     response.setBody(JSON.stringify({ "request_amount": requestAmount}));
   } catch (error) {
+    await session.abortTransaction();
+
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "error": { "message": error.message }}));
+  } finally {
+    // Encerrar a sessão
+    session.endSession();
   }
 };
