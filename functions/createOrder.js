@@ -80,7 +80,7 @@ exports = async function(request, response){
       await database.collection("wallets").updateOne(filter, update);
 
       const updatedWallet = await mongodb.db("clients").collection("wallets").findOne(
-          { "wallet_id": wallet._id });
+          { "_id": wallet._id });
 
       let doc = {
         "wallet_id": wallet._id,
@@ -88,10 +88,10 @@ exports = async function(request, response){
         "establishment_id": wallet.establishment_id,
         "timestamp": new Date(),
         "balance": {
-          // "new": updatedWallet.balance,
+          "new": updatedWallet.balance,
           "old": wallet.balance,
         },
-        // "difference": (updatedWallet.balance - wallet.balance)
+        "difference": (updatedWallet.balance - wallet.balance)
       }
 
       await database.collection("transactions").insertOne(doc);
