@@ -15,7 +15,19 @@ exports = async function(changeEvent) {
 
   // Get the "FullDocument" present in the Insert/Replace/Update ChangeEvents
   try {
-      await collection.insertOne(changeEvent);
+    let doc = {
+      "wallet_id": changeEvent.fullDocument._id,
+      "client_id": changeEvent.fullDocument.client_id,
+      "establishment_id": changeEvent.fullDocument.establishment_id,
+      "timestamp": changeEvent.wallTime,
+      "balance": {
+        "new": changeEvent.fullDocument.balance,
+        "old": changeEvent.fullDocumentBeforeChange.balance,
+      },
+      "difference": (changeEvent.fullDocument.balance - changeEvent.fullDocumentBeforeChange.balance)
+    }
+
+      await collection.insertOne(doc);
   } catch(err) {
     console.log("error performing mongodb write: ", err.message);
   }
