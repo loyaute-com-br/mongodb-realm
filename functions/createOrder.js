@@ -10,7 +10,7 @@ exports = async function(request, response){
       return;
     }
 
-    if (!context.user.custom_data.roles.includes("SELLER")) {
+    if (!context.user.custom_data.roles.includes("seller")) {
       response.setStatusCode(401);
       response.setBody(JSON.stringify({ "error": { "message": `User not authorized.` }}));
       return;
@@ -51,7 +51,7 @@ exports = async function(request, response){
       newCashback = 0;
       requestAmount = requestAmount - wallet.balance;
     } else {
-      newCashback = wallet.balance + ((parseFloat(body.value)) * 0.5);
+      newCashback = wallet.balance + ((parseFloat(body.value)) * 0.05);
     }
 
     // Update wallet
