@@ -33,14 +33,13 @@ exports = async function(request, response){
         .find({})
         .toArray();
 
-    return { "transactions": transactions };
-
     let revenue = 0;
     for (let i = 0; i < transactions.length; i++) {
       revenue += transactions[i].value;
     }
 
-    response.setBody(JSON.stringify({ "revenue": revenue, "body": body, "transactions": transactions }));
+    return { "revenue": revenue, "transactions": transactions };
+    // response.setBody(JSON.stringify({ "revenue": revenue, "body": body, "transactions": transactions }));
   } catch (error) {
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "errorType": "ERROR", "message": error.message }));
