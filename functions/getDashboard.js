@@ -29,7 +29,7 @@ exports = async function(request, response){
       }
     };
 
-    const transactions = mongodb.db("clients").collection("transactions").find({}).toArray();
+    const transactions = mongodb.db("clients").collection("transactions").find(query).toArray();
 
     let revenue = 0;
     for (let i = 0; i < transactions.length; i++) {
