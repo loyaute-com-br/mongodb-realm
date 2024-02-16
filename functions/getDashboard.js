@@ -6,7 +6,7 @@ exports = async function(request, response){
       return;
     }
 
-    if (!context.user || !context.user.custom_data.roles.includes("seller")) {
+    if (!context.user || !context.user.custom_data.roles.includes("SELLER")) {
       response.setStatusCode(401);
       response.setBody(JSON.stringify({ "errorType": "UNAUTHORIZED_ACCESS" }));
       return;
