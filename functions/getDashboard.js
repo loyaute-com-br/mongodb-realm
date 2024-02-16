@@ -1,38 +1,44 @@
-exports = async function(arg){
-  // This default function will get a value and find a document in MongoDB
-  // To see plenty more examples of what you can do with functions see: 
-  // https://www.mongodb.com/docs/atlas/app-services/functions/
-
-  // Find the name of the MongoDB service you want to use (see "Linked Data Sources" tab)
-  var serviceName = "mongodb-atlas";
-
-  // Update these to reflect your db/collection
-  var dbName = "db_name";
-  var collName = "coll_name";
-
-  // Get a collection from the context
-  var collection = context.services.get(serviceName).db(dbName).collection(collName);
-
-  var findResult;
+exports = async function(request, response){
   try {
-    // Get a value from the context (see "Values" tab)
-    // Update this to reflect your value's name.
-    var valueName = "value_name";
-    var value = context.values.get(valueName);
+    if (request.body === undefined) {
+      response.setStatusCode(400);
+      response.setBody(JSON.stringify({ "errorType": "MISSING_DATA" }));
+      return;
+    }
 
-    // Execute a FindOne in MongoDB 
-    findResult = await collection.findOne(
-      { owner_id: context.user.id, "fieldName": value, "argField": arg},
-    );
+    if (!context.user || !context.user.custom_data.roles.includes("seller")) {
+      response.setStatusCode(401);
+      response.setBody(JSON.stringify({ "errorType": "UNAUTHORIZED_ACCESS" }));
+      return;
+    }
 
-  } catch(err) {
-    console.log("Error occurred while executing findOne:", err.message);
+    const body = JSON.parse(await request.body.text());
 
-    return { error: err.message };
+    if (body.start_date === undefined || body.end_date === undefined) {
+      response.setStatusCode(400);
+      response.setBody(JSON.stringify({ "errorType": "MISSING_DATA" }));
+      return;
+    }
+
+    const mongodb = context.services.get("mongodb-atlas");
+
+    const query = {
+      timestamp: {
+        $gte: body.start_date,
+        $lt: body.end_date
+      }
+    };
+
+    const transactions = await mongodb.db("clients").collection("transactions").find({ query });
+
+    let revenue = 0;
+    transactions.forEach(transaction => {
+      revenue += transaction.value;
+    });
+
+    response.setBody(JSON.stringify({ "revenue": revenue }));
+  } catch (error) {
+    response.setStatusCode(400);
+    response.setBody(JSON.stringify({ "errorType": "ERROR", "message": error.message }));
   }
-
-  // To call other named functions:
-  // var result = context.functions.execute("function_name", arg1, arg2);
-
-  return { result: findResult };
 };
