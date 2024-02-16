@@ -29,14 +29,14 @@ exports = async function(request, response){
       }
     };
 
-    const transactions = mongodb.db("clients").collection("transactions").find(query).toArray();
+    const transactions = await mongodb.db("clients").collection("transactions").find();
 
     let revenue = 0;
     for (let i = 0; i < transactions.length; i++) {
       revenue += transactions[i].value;
     }
 
-    response.setBody(JSON.stringify({ "revenue": revenue, body: body, transactions: transactions }));
+    response.setBody(JSON.stringify({ "revenue": revenue, body: body, transactions: transactions.toArray() }));
   } catch (error) {
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "errorType": "ERROR", "message": error.message }));
