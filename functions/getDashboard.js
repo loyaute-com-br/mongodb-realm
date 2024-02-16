@@ -33,7 +33,7 @@ exports = async function(request, response){
         .find({})
         .toArray();
 
-    return transactions;
+    return { "transactions": transactions };
 
     let revenue = 0;
     for (let i = 0; i < transactions.length; i++) {
