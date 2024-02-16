@@ -32,9 +32,9 @@ exports = async function(request, response){
     const transactions = await mongodb.db("clients").collection("transactions").find({ query });
 
     let revenue = 0;
-    transactions.forEach(transaction => {
-      revenue += transaction.value;
-    });
+    for (let i = 0; i < transactions.length; i++) {
+      revenue += transactions[i].value;
+    }
 
     response.setBody(JSON.stringify({ "revenue": revenue }));
   } catch (error) {
