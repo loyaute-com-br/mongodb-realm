@@ -1,5 +1,5 @@
 exports = async function(request, response){
-  return context.services.get("mongodb-atlas").db("clients").collection("transations")
+  return context.services.get("mongodb-atlas").db("clients").collection("transactions")
       .find({})
       .toArray();
   try {
