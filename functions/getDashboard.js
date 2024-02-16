@@ -1,9 +1,4 @@
 exports = async function(request, response){
-  const a = context.services.get("mongodb-atlas").db("clients").collection("transactions")
-      .find({})
-      .toArray();
-
-  return a;
   try {
     if (request.body === undefined) {
       response.setStatusCode(400);
@@ -34,12 +29,14 @@ exports = async function(request, response){
       }
     };
 
-    const transactions = await mongodb.db("clients").collection("transactions").find();
+    const transactions = mongodb.db("clients").collection("transactions")
+        .find({})
+        .toArray();
 
     let revenue = 0;
-    for (let i = 0; i < transactions.length; i++) {
-      revenue += transactions[i].value;
-    }
+    // for (let i = 0; i < transactions.length; i++) {
+    //   revenue += transactions[i].value;
+    // }
 
     response.setBody(JSON.stringify({ "revenue": revenue, body: body, transactions: transactions.toArray() }));
   } catch (error) {
