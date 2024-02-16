@@ -29,7 +29,7 @@ exports = async function(request, response){
       }
     };
 
-    const transactions = await mongodb.db("clients").collection("transactions").find({ query });
+    const transactions = await mongodb.db("clients").collection("transactions").find({});
 
     let revenue = 0;
     for (let i = 0; i < transactions.length; i++) {
