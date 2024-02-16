@@ -1,4 +1,7 @@
 exports = async function(request, response){
+  return context.services.get("mongodb-atlas").db("clients").collection("transations")
+      .find({})
+      .toArray();
   try {
     if (request.body === undefined) {
       response.setStatusCode(400);
