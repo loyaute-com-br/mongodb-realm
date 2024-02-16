@@ -23,5 +23,15 @@
     {
         "name": "orderAudit",
         "private": true
+    },
+    {
+        "name": "myFunc",
+        "private": false,
+        "disable_arg_logs": true
+    },
+    {
+        "name": "getDashboard",
+        "private": false,
+        "disable_arg_logs": true
     }
 ]
