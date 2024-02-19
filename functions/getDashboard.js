@@ -19,8 +19,9 @@ exports = async function(request, response){
     return;
   }
 
-  const collection = context.services.get("mongodb-atlas").db("clients").collection("transactions");
+  const clientsDB = context.services.get("mongodb-atlas").db("clients");
 
+  // Pipeline para contar as transações
   const transactionsPipeline = [
     {
       $match: {
@@ -32,6 +33,8 @@ exports = async function(request, response){
     },
     {
       $group: {
+        _id: null,
+        transactions: { $push: "$$ROOT" },
         totalRevenue: { $sum: "$value" },
         count: { $sum: 1 },
         countWithCashback: { $sum: { $cond: [{ $eq: ["$used_cashback", true] }, 1, 0] } }
