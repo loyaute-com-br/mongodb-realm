@@ -33,15 +33,13 @@ exports = async function(request, response){
         .find({})
         .toArray();
 
-    let revenue = 0; // Inicializa a receita como 0
+    let totalRevenue = 0;
 
-    // Itera sobre as transações e adiciona os valores à receita
     for (let i = 0; i < transactions.length; i++) {
-      revenue += transactions[i].value;
+      totalRevenue += transactions[i].value;
     }
 
-    return { "revenue": revenue, "transactions": transactions };
-    // response.setBody(JSON.stringify({ "revenue": revenue, "body": body, "transactions": transactions }));
+    response.setBody(JSON.stringify({ revenue: totalRevenue, transactions }));
   } catch (error) {
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "errorType": "ERROR", "message": error.message }));
