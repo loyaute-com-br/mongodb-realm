@@ -28,48 +28,24 @@ exports = async function(request, response){
     // Pipeline for finding recurring sales
     const recurringPipeline = getRecurringPipeline(body);
 
+    // Pipeline for average ticket
+    const averageTicketPipeline = getAverageTicketPipeline(body);
+
     // Execute aggregations
     const transactionsResult = await executeAggregation(clientsDB, "transactions", transactionsPipeline);
     const walletsResult = await executeAggregation(clientsDB, "wallets", walletsPipeline);
     const duplicatedWalletsResult = await executeAggregation(clientsDB, "transactions", duplicatedWalletsPipeline);
     const recurringResult = await executeAggregation(clientsDB, "transactions", recurringPipeline);
-
-
-    const pipeline = [
-      {
-        $match: {
-          "timeStamp": {
-            $gte: new Date(body.start_date),
-            $lt: new Date(body.end_date)
-          }
-        }
-      },
-      {
-        $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$timeStamp" } },
-          totalTransactions: { $sum: 1 },
-          totalValue: { $sum: "$value" }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          day: "$_id",
-          averageTicket: { $divide: ["$totalValue", "$totalTransactions"] }
-        }
-      }
-    ];
-
-
+    const averageTicketResult = await executeAggregation(clientsDB, "transactions", averageTicketPipeline);
 
     // Return the results
     return {
-      ticketMedio: await clientsDB.collection("transactions").aggregate(pipeline).toArray(),
       totalRevenue: transactionsResult[0].totalRevenue,
       redeemed: transactionsResult[0].countWithCashback,
       newClients: walletsResult[0].count,
       activeClients: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].totalClientsWithMultipleTransactions : 0,
-      recurringSales: recurringResult.length > 0 ? recurringResult[0].totalPurchasesByClientsWithMultipleTransactions : 0
+      recurringSales: recurringResult.length > 0 ? recurringResult[0].totalPurchasesByClientsWithMultipleTransactions : 0,
+      averageTicket: averageTicketResult.toArray()
     };
   } catch (error) {
     console.error("Error:", error);
@@ -185,6 +161,33 @@ function getRecurringPipeline(body) {
     },
     {
       $count: "totalPurchasesByClientsWithMultipleTransactions"
+    }
+  ];
+}
+
+function getAverageTicketPipeline(body) {
+  return [
+    {
+      $match: {
+        "timeStamp": {
+          $gte: new Date(body.start_date),
+          $lt: new Date(body.end_date)
+        }
+      }
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: "%Y-%m-%d", date: "$timeStamp" } },
+        totalTransactions: { $sum: 1 },
+        totalValue: { $sum: "$value" }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        day: "$_id",
+        averageTicket: { $divide: ["$totalValue", "$totalTransactions"] }
+      }
     }
   ];
 }
