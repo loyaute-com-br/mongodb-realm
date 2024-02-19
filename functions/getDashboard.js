@@ -36,10 +36,11 @@ exports = async function(request, response){
 
     // Return the results
     return {
-      transactions: transactionsResult[0],
-      wallets: walletsResult[0],
-      duplicatedWalletsCount: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].totalClientsWithMultipleTransactions : 0,
-      recurring: recurringResult.length > 0 ? recurringResult[0].totalPurchasesByClientsWithMultipleTransactions : 0
+      totalRevenue: transactionsResult[0].totalRevenue,
+      redeemed: transactionsResult[0].countWithCashback,
+      newClients: walletsResult[0].count,
+      activeClients: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].totalClientsWithMultipleTransactions : 0,
+      recurringSales: recurringResult.length > 0 ? recurringResult[0].totalPurchasesByClientsWithMultipleTransactions : 0
     };
   } catch (error) {
     console.error("Error:", error);
