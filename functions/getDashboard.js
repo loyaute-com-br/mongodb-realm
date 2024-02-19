@@ -38,7 +38,7 @@ exports = async function(request, response){
       revenue += transactions[i].value;
     }
 
-    return { "revenue": revenue, "transactions": transactions[1].value };
+    return { "revenue": revenue, "transactions": transactions };
     // response.setBody(JSON.stringify({ "revenue": revenue, "body": body, "transactions": transactions }));
   } catch (error) {
     response.setStatusCode(400);
