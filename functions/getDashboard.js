@@ -34,8 +34,37 @@ exports = async function(request, response){
     const duplicatedWalletsResult = await executeAggregation(clientsDB, "transactions", duplicatedWalletsPipeline);
     const recurringResult = await executeAggregation(clientsDB, "transactions", recurringPipeline);
 
+
+    const pipeline = [
+      {
+        $match: {
+          "timeStamp": {
+            $gte: new Date(body.start_date),
+            $lt: new Date(body.end_date)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$timeStamp" } },
+          totalTransactions: { $sum: 1 },
+          totalValue: { $sum: "$value" }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          day: "$_id",
+          averageTicket: { $divide: ["$totalValue", "$totalTransactions"] }
+        }
+      }
+    ];
+
+
+
     // Return the results
     return {
+      ticketMedio: await transactions.aggregate(pipeline).toArray(),
       totalRevenue: transactionsResult[0].totalRevenue,
       redeemed: transactionsResult[0].countWithCashback,
       newClients: walletsResult[0].count,
