@@ -6,7 +6,9 @@ exports = async function() {
       $group: {
         _id: null,
         transactions: { $push: "$$ROOT" },
-        totalRevenue: { $sum: "$value" }
+        totalRevenue: { $sum: "$value" },
+        count: { $sum: 1 },
+        countWithCashback: { $sum: { $cond: [{ $eq: ["$used_cashback", true] }, 1, 0] } }
       }
     }
   ];
