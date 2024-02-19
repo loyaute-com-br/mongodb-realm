@@ -29,9 +29,9 @@ exports = async function(request, response){
       }
     };
 
-    const transactions = await mongodb.db("clients").collection("transactions")
-        .find({});
-    
+    const transactions = mongodb.db("clients").collection("transactions")
+        .find({}).toArray();
+
     return JSON.parse(transactions);
 
     let totalRevenue = 0;
