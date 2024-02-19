@@ -78,7 +78,7 @@ exports = async function(request, response){
     },
     {
       $match: {
-        count: { $gt: 1 } // Filtra grupos com mais de uma transação
+        count: { $gt: 1 }
       }
     }
   ];
