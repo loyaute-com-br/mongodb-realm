@@ -60,31 +60,28 @@ exports = async function(request, response){
   ];
 
 // Pipeline para contar os clientes que compraram mais de uma vez no período selecionado
-  const duplicatedWalletsPipeline = [
+  const duplicatedWalletsPipeline= [
     {
       $match: {
-        timestamp: {
-          $gte: new Date(body.start_date),
-          $lt: new Date(body.end_date)
+        "timeStamp": {
+          $gte: new Date(startTimestamp),
+          $lte: new Date(endTimestamp)
         }
       }
     },
     {
       $group: {
         _id: "$wallet_id",
-        count: { $sum: 1 }
+        totalTransactions: { $sum: 1 }
       }
     },
     {
       $match: {
-        count: { $gt: 1 }
+        totalTransactions: { $gte: 2 }
       }
     },
     {
-      $group: {
-        _id: null,
-        count: { $sum: 1 }
-      }
+      $count: "totalClientsWithMultipleTransactions"
     }
   ];
 
@@ -95,6 +92,6 @@ exports = async function(request, response){
   return {
     transactions: transactionsResult[0],
     wallets: walletsResult[0],
-    duplicatedWalletsCount: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].count : 0
+    duplicatedWalletsCount: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].totalClientsWithMultipleTransactions : 0
   };
 };
