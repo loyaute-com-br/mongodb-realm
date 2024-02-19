@@ -42,7 +42,8 @@ exports = async function(request, response){
       cpf: body.cpf,
       first_name: firstName,
       surname: surname,
-      phone: body.phone
+      phone: body.phone,
+      timeStamp: new Date()
     }
 
     await mongodb.db("clients").collection("clients").insertOne(doc);

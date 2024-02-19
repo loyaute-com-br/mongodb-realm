@@ -45,6 +45,7 @@ exports = async function(request, response){
         client_id: client._id,
         establishment_id: context.user.custom_data.establishment_id,
         balance: balance,
+        timeStamp: new Date(),
       }
 
       await mongodb.db("clients").collection("wallets").insertOne(doc);

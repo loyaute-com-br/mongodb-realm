@@ -86,7 +86,7 @@ exports = async function(request, response){
         "wallet_id": wallet._id,
         "client_id": client._id,
         "establishment_id": wallet.establishment_id,
-        "timestamp": new Date(),
+        "timeStamp": new Date(),
         "balance": {
           "new": updatedWallet.balance,
           "old": wallet.balance,

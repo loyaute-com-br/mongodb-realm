@@ -25,7 +25,7 @@ exports = async function(request, response){
   const transactionsPipeline = [
     {
       $match: {
-        timestamp: {
+        timeStamp: {
           $gte: new Date(body.start_date),
           $lt: new Date(body.end_date)
         }
