@@ -88,9 +88,9 @@ exports = async function(request, response){
   const sellRecorrentes = [
     {
       $match: {
-        "timeStamp": {
-          $gte: new Date(startTimestamp),
-          $lte: new Date(endTimestamp)
+        timeStamp: {
+          $gte: new Date(body.start_date),
+          $lt: new Date(body.end_date)
         }
       }
     },
