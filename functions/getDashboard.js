@@ -21,7 +21,7 @@ exports = async function() {
 
   const collection = context.services.get("mongodb-atlas").db("clients").collection("transactions");
 
-  const pipeline = [
+  const transactionsPipeline = [
     {
       $match: {
         timestamp: {
