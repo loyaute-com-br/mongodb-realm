@@ -1,12 +1,11 @@
 exports = async function(request, response){
   try {
-    const { body } = request;
-    const { start_date, end_date } = body;
+    const body = JSON.parse(await request.body.text());
 
-    // Check if there is data in the request body
-    if (!body || !start_date || !end_date) {
+    if (body.start_date === undefined || body.end_date === undefined) {
       response.setStatusCode(400);
-      return response.setBody(JSON.stringify({ "errorType": "MISSING_DATA" }));
+      response.setBody(JSON.stringify({ "errorType": "MISSING_DATA" }));
+      return;
     }
 
     // Check if the user has permission
