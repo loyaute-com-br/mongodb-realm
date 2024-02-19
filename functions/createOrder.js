@@ -92,7 +92,8 @@ exports = async function(request, response){
           "old": wallet.balance,
         },
         "difference": (updatedWallet.balance - wallet.balance),
-        "value": body.value
+        "value": body.value,
+        "used_cashback": body.using_cashback
       }
 
       await database.collection("transactions").insertOne(doc);
