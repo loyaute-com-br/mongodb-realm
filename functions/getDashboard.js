@@ -39,9 +39,31 @@ exports = async function() {
     }
   ];
 
-  const result = await collection.aggregate(pipeline).toArray();
+  // Pipeline para contar as wallets
+  const walletsPipeline = [
+    {
+      $match: {
+        timestamp: {
+          $gte: new Date(startDate),
+          $lte: new Date(endDate)
+        }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        count: { $sum: 1 }
+      }
+    }
+  ];
 
-  return result[0];
+  const transactionsResult = await clientsDB.collection("transactions").aggregate(transactionsPipeline).toArray();
+  const walletsResult = await clientsDB.collection("wallets").aggregate(walletsPipeline).toArray();
+
+  return {
+    transactions: transactionsResult[0],
+    wallets: walletsResult[0]
+  };
 };
 
 
