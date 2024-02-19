@@ -30,8 +30,7 @@ exports = async function(request, response){
     };
 
     const transactions = mongodb.db("clients").collection("transactions")
-        .find({})
-        .toArray();
+        .find({});
 
     let totalRevenue = 0;
 
@@ -39,7 +38,8 @@ exports = async function(request, response){
       totalRevenue += transactions[i].value;
     }
 
-    response.setBody(JSON.stringify({ revenue: totalRevenue, transactions: transactions.size }));
+    return { revenue: totalRevenue, transactions: transactions };
+    // response.setBody(JSON.stringify({ revenue: totalRevenue, transactions: transactions }));
   } catch (error) {
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "errorType": "ERROR", "message": error.message }));
