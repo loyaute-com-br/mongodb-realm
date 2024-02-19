@@ -33,6 +33,7 @@ exports = async function(request, response){
     },
     {
       $group: {
+        _id: null,
         totalRevenue: { $sum: "$value" },
         count: { $sum: 1 },
         countWithCashback: { $sum: { $cond: [{ $eq: ["$used_cashback", true] }, 1, 0] } }
@@ -44,6 +45,7 @@ exports = async function(request, response){
   const walletsPipeline = [
     {
       $group: {
+        _id: null,
         count: { $sum: 1 }
       }
     }
