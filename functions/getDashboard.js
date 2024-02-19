@@ -1,28 +1,62 @@
 exports = async function(request, response){
-  if (request.body === undefined) {
-    response.setStatusCode(400);
-    response.setBody(JSON.stringify({ "errorType": "MISSING_DATA" }));
-    return;
+  try {
+    const { body } = request;
+    const { start_date, end_date } = body;
+
+    // Check if there is data in the request body
+    if (!body || !start_date || !end_date) {
+      response.setStatusCode(400);
+      return response.setBody(JSON.stringify({ "errorType": "MISSING_DATA" }));
+    }
+
+    // Check if the user has permission
+    if (!context.user || !context.user.custom_data.roles.includes("seller")) {
+      response.setStatusCode(401);
+      return response.setBody(JSON.stringify({ "errorType": "UNAUTHORIZED_ACCESS" }));
+    }
+
+    const clientsDB = context.services.get("mongodb-atlas").db("clients");
+
+    // Pipeline for transactions counting
+    const transactionsPipeline = getTransactionsPipeline(body);
+
+    // Pipeline for wallets counting
+    const walletsPipeline = getWalletsPipeline(body);
+
+    // Pipeline for finding duplicated wallets
+    const duplicatedWalletsPipeline = getDuplicatedWalletsPipeline(body);
+
+    // Pipeline for finding recurring sales
+    const recurringPipeline = getRecurringPipeline(body);
+
+    // Execute aggregations
+    const transactionsResult = await executeAggregation(clientsDB, "transactions", transactionsPipeline);
+    const walletsResult = await executeAggregation(clientsDB, "wallets", walletsPipeline);
+    const duplicatedWalletsResult = await executeAggregation(clientsDB, "transactions", duplicatedWalletsPipeline);
+    const recurringResult = await executeAggregation(clientsDB, "transactions", recurringPipeline);
+
+    // Return the results
+    return {
+      transactions: transactionsResult[0],
+      wallets: walletsResult[0],
+      duplicatedWalletsCount: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].totalClientsWithMultipleTransactions : 0,
+      recurring: recurringResult.length > 0 ? recurringResult[0].totalPurchasesByClientsWithMultipleTransactions : 0
+    };
+  } catch (error) {
+    console.error("Error:", error);
+    response.setStatusCode(500);
+    return response.setBody(JSON.stringify({ "errorType": "INTERNAL_SERVER_ERROR" }));
   }
+};
 
-  if (!context.user || !context.user.custom_data.roles.includes("seller")) {
-    response.setStatusCode(401);
-    response.setBody(JSON.stringify({ "errorType": "UNAUTHORIZED_ACCESS" }));
-    return;
-  }
+// Helper function to execute aggregations
+async function executeAggregation(db, collectionName, pipeline) {
+  return await db.collection(collectionName).aggregate(pipeline).toArray();
+}
 
-  const body = JSON.parse(await request.body.text());
-
-  if (body.start_date === undefined || body.end_date === undefined) {
-    response.setStatusCode(400);
-    response.setBody(JSON.stringify({ "errorType": "MISSING_DATA" }));
-    return;
-  }
-
-  const clientsDB = context.services.get("mongodb-atlas").db("clients");
-
-  // Pipeline para contar as transações
-  const transactionsPipeline = [
+// Helper functions to build pipelines
+function getTransactionsPipeline(body) {
+  return [
     {
       $match: {
         timeStamp: {
@@ -40,9 +74,10 @@ exports = async function(request, response){
       }
     }
   ];
+}
 
-  // Pipeline para contar as wallets
-  const walletsPipeline = [
+function getWalletsPipeline(body) {
+  return [
     {
       $match: {
         timeStamp: {
@@ -58,9 +93,10 @@ exports = async function(request, response){
       }
     }
   ];
+}
 
-// Pipeline para contar os clientes que compraram mais de uma vez no período selecionado
-  const duplicatedWalletsPipeline= [
+function getDuplicatedWalletsPipeline(body) {
+  return [
     {
       $match: {
         timeStamp: {
@@ -84,8 +120,10 @@ exports = async function(request, response){
       $count: "totalClientsWithMultipleTransactions"
     }
   ];
+}
 
-  const sellRecorrentes = [
+function getRecurringPipeline(body) {
+  return [
     {
       $match: {
         timeStamp: {
@@ -120,16 +158,4 @@ exports = async function(request, response){
       $count: "totalPurchasesByClientsWithMultipleTransactions"
     }
   ];
-
-  const transactionsResult = await clientsDB.collection("transactions").aggregate(transactionsPipeline).toArray();
-  const walletsResult = await clientsDB.collection("wallets").aggregate(walletsPipeline).toArray();
-  const duplicatedWalletsResult = await clientsDB.collection("transactions").aggregate(duplicatedWalletsPipeline).toArray();
-  const recorrentesResult = await clientsDB.collection("transactions").aggregate(sellRecorrentes).toArray();
-
-  return {
-    transactions: transactionsResult[0],
-    wallets: walletsResult[0],
-    duplicatedWalletsCount: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].totalClientsWithMultipleTransactions : 0,
-    recorrentes: recorrentesResult.length > 0 ? recorrentesResult[0].totalPurchasesByClientsWithMultipleTransactions : 0
-  };
-};
+}
