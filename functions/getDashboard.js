@@ -64,7 +64,7 @@ exports = async function(request, response){
 
     // Return the results
     return {
-      ticketMedio: await transactions.aggregate(pipeline).toArray(),
+      ticketMedio: await clientsDB.collection("transactions").aggregate(pipeline).toArray(),
       totalRevenue: transactionsResult[0].totalRevenue,
       redeemed: transactionsResult[0].countWithCashback,
       newClients: walletsResult[0].count,
