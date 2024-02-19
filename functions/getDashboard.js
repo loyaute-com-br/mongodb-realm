@@ -44,6 +44,14 @@ exports = async function(request, response){
   // Pipeline para contar as wallets
   const walletsPipeline = [
     {
+      $match: {
+        timeStamp: {
+          $gte: new Date(body.start_date),
+          $lt: new Date(body.end_date)
+        }
+      }
+    },
+    {
       $group: {
         _id: null,
         count: { $sum: 1 }
