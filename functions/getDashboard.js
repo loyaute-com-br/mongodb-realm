@@ -24,14 +24,6 @@ exports = async function(request, response){
   // Pipeline para contar as transações
   const transactionsPipeline = [
     {
-      $match: {
-        timestamp: {
-          $gte: body.start_date,
-          $lt: body.end_date
-        }
-      }
-    },
-    {
       $group: {
         _id: null,
         transactions: { $push: "$$ROOT" },
@@ -44,14 +36,6 @@ exports = async function(request, response){
 
   // Pipeline para contar as wallets
   const walletsPipeline = [
-    {
-      $match: {
-        timestamp: {
-          $gte: body.start_date,
-          $lt: body.end_date
-        }
-      }
-    },
     {
       $group: {
         _id: null,
