@@ -26,8 +26,8 @@ exports = async function(request, response){
     {
       $match: {
         timestamp: {
-          // $gte: body.start_date,
-          $lt: new Date()
+          $gte: new Date(body.start_date),
+          $lt: new Date(body.end_date)
         }
       }
     },
