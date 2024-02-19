@@ -85,13 +85,51 @@ exports = async function(request, response){
     }
   ];
 
+  const sellRecorrentes = [
+    {
+      $match: {
+        "timeStamp": {
+          $gte: new Date(startTimestamp),
+          $lte: new Date(endTimestamp)
+        }
+      }
+    },
+    {
+      $group: {
+        _id: "$wallet_id",
+        totalTransactions: { $sum: 1 }
+      }
+    },
+    {
+      $match: {
+        totalTransactions: { $gte: 2 }
+      }
+    },
+    {
+      $lookup: {
+        from: "transactions",
+        localField: "_id",
+        foreignField: "wallet_id",
+        as: "allTransactions"
+      }
+    },
+    {
+      $unwind: "$allTransactions"
+    },
+    {
+      $count: "totalPurchasesByClientsWithMultipleTransactions"
+    }
+  ];
+
   const transactionsResult = await clientsDB.collection("transactions").aggregate(transactionsPipeline).toArray();
   const walletsResult = await clientsDB.collection("wallets").aggregate(walletsPipeline).toArray();
   const duplicatedWalletsResult = await clientsDB.collection("transactions").aggregate(duplicatedWalletsPipeline).toArray();
+  const recorrentesResult = await clientsDB.collection("transactions").aggregate(sellRecorrentes).toArray();
 
   return {
     transactions: transactionsResult[0],
     wallets: walletsResult[0],
-    duplicatedWalletsCount: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].totalClientsWithMultipleTransactions : 0
+    duplicatedWalletsCount: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].totalClientsWithMultipleTransactions : 0,
+    recorrentes: recorrentesResult.length > 0 ? recorrentesResult[0].totalPurchasesByClientsWithMultipleTransactions : 0
   };
 };
