@@ -33,7 +33,9 @@ exports = async function(request, response){
         .find({})
         .toArray();
 
-    let revenue = 0;
+    let revenue = 0; // Inicializa a receita como 0
+
+    // Itera sobre as transações e adiciona os valores à receita
     for (let i = 0; i < transactions.length; i++) {
       revenue += transactions[i].value;
     }
