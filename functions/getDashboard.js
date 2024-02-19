@@ -19,7 +19,6 @@ exports = async function(request, response){
     return;
   }
 
-  return {start: body.start_date, end: body.end_date}
   const clientsDB = context.services.get("mongodb-atlas").db("clients");
 
   // Pipeline para contar as transações
@@ -43,14 +42,6 @@ exports = async function(request, response){
 
   // Pipeline para contar as wallets
   const walletsPipeline = [
-    {
-      $match: {
-        timestamp: {
-          $gte: body.start_date,
-          $lt: body.end_date
-        }
-      }
-    },
     {
       $group: {
         count: { $sum: 1 }
