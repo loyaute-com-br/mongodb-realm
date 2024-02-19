@@ -59,8 +59,8 @@ exports = async function(request, response){
     }
   ];
 
-  // Pipeline para contar as transações duplicadas por wallet
-  const duplicatedTransactionsPipeline = [
+// Pipeline para contar os clientes que compraram mais de uma vez no período selecionado
+  const duplicatedWalletsPipeline = [
     {
       $match: {
         timestamp: {
@@ -72,7 +72,6 @@ exports = async function(request, response){
     {
       $group: {
         _id: "$wallet_id",
-        transactions: { $push: "$$ROOT" },
         count: { $sum: 1 }
       }
     },
@@ -80,16 +79,22 @@ exports = async function(request, response){
       $match: {
         count: { $gt: 1 }
       }
+    },
+    {
+      $group: {
+        _id: null,
+        count: { $sum: 1 }
+      }
     }
   ];
 
   const transactionsResult = await clientsDB.collection("transactions").aggregate(transactionsPipeline).toArray();
   const walletsResult = await clientsDB.collection("wallets").aggregate(walletsPipeline).toArray();
-  const duplicatedTransactionsResult = await clientsDB.collection("transactions").aggregate(duplicatedTransactionsPipeline).toArray();
+  const duplicatedWalletsResult = await clientsDB.collection("transactions").aggregate(duplicatedWalletsPipeline).toArray();
 
   return {
     transactions: transactionsResult[0],
     wallets: walletsResult[0],
-    duplicatedTransactions: duplicatedTransactionsResult
+    duplicatedWalletsCount: duplicatedWalletsResult.length > 0 ? duplicatedWalletsResult[0].count : 0
   };
 };
