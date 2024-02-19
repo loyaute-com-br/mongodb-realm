@@ -1,4 +1,4 @@
-exports = async function() {
+exports = async function(request, response){
   if (request.body === undefined) {
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "errorType": "MISSING_DATA" }));
