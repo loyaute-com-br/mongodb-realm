@@ -105,7 +105,7 @@ exports = async function(request, response){
     // await insert transaction
 
     response.setStatusCode(201);
-    response.setBody(JSON.stringify({ "request_amount": requestAmount}));
+    response.setBody(JSON.stringify({ "request_amount": requestAmount, "earned_cashback": (requestAmount * 0.05) }));
   } catch (error) {
     await session.abortTransaction();
 
