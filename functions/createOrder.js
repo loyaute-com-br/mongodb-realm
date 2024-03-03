@@ -47,7 +47,7 @@ exports = async function(request, response){
     // Calculate new cashback amount
     let newCashback;
 
-    let requestAmount = parseFloat(body.value);
+    let requestAmount = parseFloat(body.value).toFixed(2);
 
     if(body.using_cashback === true) {
       requestAmount = requestAmount - wallet.balance;
