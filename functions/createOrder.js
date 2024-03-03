@@ -65,7 +65,7 @@ exports = async function(request, response){
 
     const update = {
       $set: {
-        "balance": newCashback,
+        "balance": newCashback.toFixed(2),
       }
     };
 
