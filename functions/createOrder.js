@@ -47,7 +47,7 @@ exports = async function(request, response){
     // Calculate new cashback amount
     let newCashback;
 
-    let requestAmount = parseFloat(body.value).toFixed(2);
+    let requestAmount = parseFloat(body.value);
 
     if(body.using_cashback === true) {
       requestAmount = requestAmount - wallet.balance;
@@ -56,7 +56,7 @@ exports = async function(request, response){
       newCashback = wallet.balance + ((parseFloat(body.value)) * 0.05);
     }
 
-    let earnedCashback = (requestAmount * 0.05).toFixed(2);
+    let earnedCashback = (requestAmount * 0.05);
 
     // Update wallet
     const filter = {
@@ -65,7 +65,7 @@ exports = async function(request, response){
 
     const update = {
       $set: {
-        "balance": newCashback.toFixed(2),
+        "balance": newCashback,
       }
     };
 
@@ -93,7 +93,7 @@ exports = async function(request, response){
           "new": updatedWallet.balance,
           "old": wallet.balance,
         },
-        "difference": (updatedWallet.balance - wallet.balance).toFixed(2),
+        "difference": (updatedWallet.balance - wallet.balance),
         "value": body.value,
         "used_cashback": body.using_cashback
       }
