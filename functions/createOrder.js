@@ -93,7 +93,7 @@ exports = async function(request, response){
           "new": updatedWallet.balance,
           "old": wallet.balance,
         },
-        "difference": (updatedWallet.balance - wallet.balance),
+        "difference": (updatedWallet.balance - wallet.balance).toFixed(2),
         "value": body.value,
         "used_cashback": body.using_cashback
       }
