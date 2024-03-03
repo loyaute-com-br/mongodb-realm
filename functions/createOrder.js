@@ -56,6 +56,8 @@ exports = async function(request, response){
       newCashback = wallet.balance + ((parseFloat(body.value)) * 0.05);
     }
 
+    let earnedCashback = (requestAmount * 0.05).toFixed(2);
+
     // Update wallet
     const filter = {
       _id: wallet._id
@@ -105,7 +107,7 @@ exports = async function(request, response){
     // await insert transaction
 
     response.setStatusCode(201);
-    response.setBody(JSON.stringify({ "request_amount": requestAmount, "earned_cashback": (requestAmount * 0.05) }));
+    response.setBody(JSON.stringify({ "request_amount": requestAmount, "earned_cashback": earnedCashback }));
   } catch (error) {
     await session.abortTransaction();
 
