@@ -26,7 +26,7 @@ exports = async function(request, response){
       return;
     }
 
-    return {cpf: body.cpf}
+    return {cpf: body.cpf, encryptedCpf: await context.functions.execute("encryptData", body.cpf)}
 
     const mongodb = context.services.get("mongodb-atlas");
 
