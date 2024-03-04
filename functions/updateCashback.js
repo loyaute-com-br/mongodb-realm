@@ -1,4 +1,5 @@
 exports = async function () {
+    const mongodb = context.services.get("mongodb-atlas");
     const session = mongodb.startSession();
 
     try {
