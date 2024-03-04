@@ -1,38 +1,38 @@
-exports = async function(arg){
-  // This default function will get a value and find a document in MongoDB
-  // To see plenty more examples of what you can do with functions see: 
-  // https://www.mongodb.com/docs/atlas/app-services/functions/
+exports = async function() {
+  // Obtém a data atual sem o horário
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  // Find the name of the MongoDB service you want to use (see "Linked Data Sources" tab)
-  var serviceName = "mongodb-atlas";
+  // Acessa as coleções necessárias
+  const transactionsCollection = context.services.get("mongodb-atlas").db("clients").collection("transactions");
+  const walletsCollection = context.services.get("mongodb-atlas").db("clients").collection("wallets");
 
-  // Update these to reflect your db/collection
-  var dbName = "db_name";
-  var collName = "coll_name";
+  // Consulta as transações que correspondem aos critérios
+  const transactions = await transactionsCollection.find({
+    "cashback_availability": today,
+    "cashback_status": "NOT_EARNED"
+  }).toArray();
 
-  // Get a collection from the context
-  var collection = context.services.get(serviceName).db(dbName).collection(collName);
+  // Para cada transação encontrada, atualiza a carteira correspondente e altera o status da transação
+  for (const transaction of transactions) {
+    // Encontra a carteira associada à transação
+    const wallet = await walletsCollection.findOne({ "_id": transaction.wallet_id });
 
-  var findResult;
-  try {
-    // Get a value from the context (see "Values" tab)
-    // Update this to reflect your value's name.
-    var valueName = "value_name";
-    var value = context.values.get(valueName);
+    // Acrescenta o valor do cashback ganho ao saldo da carteira
+    const newBalance = wallet.balance + transaction.earned_cashback;
 
-    // Execute a FindOne in MongoDB 
-    findResult = await collection.findOne(
-      { owner_id: context.user.id, "fieldName": value, "argField": arg},
+    // Atualiza o saldo da carteira
+    await walletsCollection.updateOne(
+        { "_id": transaction.wallet_id },
+        { "$set": { "balance": newBalance } }
     );
 
-  } catch(err) {
-    console.log("Error occurred while executing findOne:", err.message);
-
-    return { error: err.message };
+    // Atualiza o status da transação para "EARNED"
+    await transactionsCollection.updateOne(
+        { "_id": transaction._id },
+        { "$set": { "cashback_status": "EARNED" } }
+    );
   }
 
-  // To call other named functions:
-  // var result = context.functions.execute("function_name", arg1, arg2);
-
-  return { result: findResult };
+  return "Operação concluída com sucesso";
 };
