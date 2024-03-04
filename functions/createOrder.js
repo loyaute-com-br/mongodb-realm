@@ -27,7 +27,7 @@ exports = async function(request, response){
     }
 
     const client = await mongodb.db("clients").collection("clients").findOne(
-        { "cpf": body.cpf });
+        { "cpf": await context.functions.execute("encryptData", body.cpf) });
 
     if (!client) {
       response.setStatusCode(404);
