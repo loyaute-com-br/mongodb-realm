@@ -40,21 +40,21 @@ exports = async function(request, response){
 
     let key = "1`23456y6uyj"
 
-    // let doc = {
-    //   cpf: await context.functions.execute("encryptData", body.cpf),
-    //   first_name: await context.functions.execute("encryptData", firstName),
-    //   surname: await context.functions.execute("encryptData", surname),
-    //   phone: await context.functions.execute("encryptData", body.phone),
-    //   timeStamp: new Date()
-    // }
-
     let doc = {
-      cpf: body.cpf,
-      first_name: firstName,
-      surname: surname,
-      phone: body.phone,
+      cpf: await context.functions.execute("encryptData", body.cpf),
+      first_name: await context.functions.execute("encryptData", firstName),
+      surname: await context.functions.execute("encryptData", surname),
+      phone: await context.functions.execute("encryptData", body.phone),
       timeStamp: new Date()
     }
+
+    // let doc = {
+    //   cpf: body.cpf,
+    //   first_name: firstName,
+    //   surname: surname,
+    //   phone: body.phone,
+    //   timeStamp: new Date()
+    // }
 
     await mongodb.db("clients").collection("clients").insertOne(doc);
 
