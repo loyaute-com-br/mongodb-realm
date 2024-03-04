@@ -98,7 +98,7 @@ exports = async function(request, response){
       };
 
       if (cashbackAvailability === 0) {
-        update.$set.balance = newCashback;
+        update.$set.balance = newCashback.toFixed(2);
         cashbackStatus = 'EARNED'
       }
 
