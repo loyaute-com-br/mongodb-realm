@@ -123,15 +123,19 @@ exports = async function(request, response){
 
       await database.collection("transactions").insertOne(doc);
     }, transactionOptions);
+
+    // Comitar a transação
+    await session.commitTransaction();
+
+    // await insert transaction
+
     response.setStatusCode(201);
     response.setBody(JSON.stringify({ "request_amount": requestAmount, "earned_cashback": earnedCashback }));
-
-    await session.commitTransaction();
   } catch (error) {
-    await session.abortTransaction();
-
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "error": { "message": error.message }}));
+
+    await session.abortTransaction();
   } finally {
     // Encerrar a sessão
     session.endSession();
