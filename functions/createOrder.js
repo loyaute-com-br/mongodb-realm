@@ -115,7 +115,7 @@ exports = async function(request, response){
         },
         "difference": (updatedWallet.balance - wallet.balance),
         "value": body.value,
-        "used_cashback": body.using_cashback
+        "used_cashback": body.using_cashback,
         "earned_cashback": earnedCashback,
         "cashback_availability": availability,
         "cashback_status": cashbackStatus,
