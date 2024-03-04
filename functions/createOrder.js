@@ -52,8 +52,9 @@ exports = async function(request, response){
       response.setBody(JSON.stringify({ "error": { "message": `Establishment does not exist.` }}));
       return;
     }
-    
+
     let cashbackPercentage = establishment.settings.cashback_percentage / 100;
+    let cashbackAvailability = establishment.settings.cashback_availability;
 
     // Calculate new cashback amount
     let newCashback;
@@ -69,17 +70,6 @@ exports = async function(request, response){
 
     let earnedCashback = (requestAmount * cashbackPercentage);
 
-    // Update wallet
-    const filter = {
-      _id: wallet._id
-    };
-
-    const update = {
-      $set: {
-        "balance": newCashback,
-      }
-    };
-
     const database = mongodb.db("clients");
 
     const transactionOptions = {
@@ -89,11 +79,29 @@ exports = async function(request, response){
     };
 
     await session.withTransaction(async () => {
-      // Executar operações dentro da transação
-      await database.collection("wallets").updateOne(filter, update);
+      let cashbackStatus = 'NOT_EARNED'
+
+      if(cashbackAvailability == 0) {
+        // Update wallet
+        const filter = {
+          _id: wallet._id
+        };
+
+        const update = {
+          $set: {
+            "balance": newCashback,
+          }
+        };
+
+        await database.collection("wallets").updateOne(filter, update);
+        cashbackStatus = 'EARNED'
+      }
 
       const updatedWallet = await mongodb.db("clients").collection("wallets").findOne(
           { "_id": wallet._id });
+
+      let availability = new Date();
+      availability.setDate(availability.getDate() + cashbackAvailability);
 
       let doc = {
         "wallet_id": wallet._id,
@@ -107,7 +115,8 @@ exports = async function(request, response){
         "difference": (updatedWallet.balance - wallet.balance),
         "value": body.value,
         "earned_cashback": earnedCashback,
-        "cashback_availability": new Date(),
+        "cashback_availability": availability,
+        "cashback_status": cashbackStatus,
         "used_cashback": body.using_cashback
       }
 
