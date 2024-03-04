@@ -1,5 +1,5 @@
 exports = async function encryptData(data){
-  return data;
+  // return data;
   const crypto = require('crypto');
 
   const key = 'banana';
