@@ -25,7 +25,7 @@ exports = async function(request, response){
       response.setBody(JSON.stringify({ "errorType": "INVALID_CPF" }));
       return;
     }
-    
+
     const mongodb = context.services.get("mongodb-atlas");
 
     const client = await mongodb.db("clients").collection("clients").findOne({ "cpf": await context.functions.execute("encryptData", body.cpf) });
