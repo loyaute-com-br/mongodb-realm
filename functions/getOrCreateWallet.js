@@ -28,7 +28,7 @@ exports = async function(request, response){
 
     const mongodb = context.services.get("mongodb-atlas");
 
-    const client = await mongodb.db("clients").collection("clients").findOne({ "cpf": body.cpf });
+    const client = await mongodb.db("clients").collection("clients").findOne({ "cpf": await context.functions.execute("encryptData", body.cpf) });
 
     if (!client) {
       response.setStatusCode(404);
