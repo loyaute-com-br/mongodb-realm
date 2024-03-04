@@ -64,6 +64,7 @@ function getTransactionsPipeline(body) {
   return [
     {
       $match: {
+        establishment_id: context.user.custom_data.establishment_id,
         timeStamp: {
           $gte: new Date(body.start_date),
           $lt: new Date(body.end_date)
@@ -85,6 +86,7 @@ function getWalletsPipeline(body) {
   return [
     {
       $match: {
+        establishment_id: context.user.custom_data.establishment_id,
         timeStamp: {
           $gte: new Date(body.start_date),
           $lt: new Date(body.end_date)
@@ -104,6 +106,7 @@ function getDuplicatedWalletsPipeline(body) {
   return [
     {
       $match: {
+        establishment_id: context.user.custom_data.establishment_id,
         timeStamp: {
           $gte: new Date(body.start_date),
           $lt: new Date(body.end_date)
@@ -131,6 +134,7 @@ function getRecurringPipeline(body) {
   return [
     {
       $match: {
+        establishment_id: context.user.custom_data.establishment_id,
         timeStamp: {
           $gte: new Date(body.start_date),
           $lt: new Date(body.end_date)
@@ -169,7 +173,8 @@ function getAverageTicketPipeline(body) {
   return [
     {
       $match: {
-        "timeStamp": {
+        establishment_id: context.user.custom_data.establishment_id,
+        timeStamp: {
           $gte: new Date(body.start_date),
           $lt: new Date(body.end_date)
         }
