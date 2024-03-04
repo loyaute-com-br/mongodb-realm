@@ -102,6 +102,7 @@ exports = async function(request, response){
 
       let availability = new Date();
       availability.setDate(availability.getDate() + cashbackAvailability);
+      availability.setHours(0, 0, 0, 0);
 
       let doc = {
         "wallet_id": wallet._id,
