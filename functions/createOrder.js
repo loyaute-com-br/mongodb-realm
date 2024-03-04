@@ -55,6 +55,7 @@ exports = async function(request, response){
 
     let cashbackPercentage = establishment.settings.cashback_percentage / 100;
     let cashbackAvailability = establishment.settings.cashback_availability;
+    let cashbackExpiration = establishment.settings.cashback_expiration;
 
     // Calculate new cashback amount
     let newCashback;
@@ -81,21 +82,27 @@ exports = async function(request, response){
     await session.withTransaction(async () => {
       let cashbackStatus = 'NOT_EARNED'
 
-      if(cashbackAvailability == 0) {
-        // Update wallet
-        const filter = {
-          _id: wallet._id
-        };
+      // Update wallet
+      const filter = {
+        _id: wallet._id
+      };
 
-        const update = {
-          $set: {
-            "balance": newCashback,
-          }
-        };
+      let expiration = new Date();
+      expiration.setDate(expiration.getDate() + cashbackExpiration);
+      expiration.setHours(0, 0, 0, 0);
 
-        await database.collection("wallets").updateOne(filter, update);
+      let update = {
+        $set: {
+          "expiration_date": expiration
+        }
+      };
+
+      if (cashbackAvailability === 0) {
+        update.$set.balance = newCashback;
         cashbackStatus = 'EARNED'
       }
+
+      await database.collection("wallets").updateOne(filter, update);
 
       const updatedWallet = await mongodb.db("clients").collection("wallets").findOne(
           { "_id": wallet._id });
