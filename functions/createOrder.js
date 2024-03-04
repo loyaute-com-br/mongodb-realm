@@ -44,6 +44,17 @@ exports = async function(request, response){
       return;
     }
 
+    const establishment = await mongodb.db("establishments").collection("establishments").findOne(
+        { "_id": context.user.custom_data.establishment_id });
+
+    if (!establishment) {
+      response.setStatusCode(404);
+      response.setBody(JSON.stringify({ "error": { "message": `Establishment does not exist.` }}));
+      return;
+    }
+    
+    let cashbackPercentage = establishment.settings.cashback_percentage / 100;
+
     // Calculate new cashback amount
     let newCashback;
 
@@ -51,12 +62,12 @@ exports = async function(request, response){
 
     if(body.using_cashback === true) {
       requestAmount = requestAmount - wallet.balance;
-      newCashback = requestAmount * 0.05;
+      newCashback = requestAmount * cashbackPercentage;
     } else {
-      newCashback = wallet.balance + ((parseFloat(body.value)) * 0.05);
+      newCashback = wallet.balance + ((parseFloat(body.value)) * cashbackPercentage);
     }
 
-    let earnedCashback = (requestAmount * 0.05);
+    let earnedCashback = (requestAmount * cashbackPercentage);
 
     // Update wallet
     const filter = {
@@ -95,6 +106,8 @@ exports = async function(request, response){
         },
         "difference": (updatedWallet.balance - wallet.balance),
         "value": body.value,
+        "earned_cashback": earnedCashback,
+        "cashback_availability": new Date(),
         "used_cashback": body.using_cashback
       }
 
