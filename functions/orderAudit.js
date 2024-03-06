@@ -27,6 +27,8 @@ exports = async function(changeEvent) {
       "difference": (changeEvent.fullDocument.balance - changeEvent.fullDocumentBeforeChange.balance)
     }
 
+    await collection.insertOne(doc);
+
     if(changeEvent.fullDocument.balance > 10) {
       const accountSid = 'AC35fb7c08c4ba66c7f92e7c6d235eddcd';
       const authToken = 'e9175cbb0e7a3872332c227c312380b3';
@@ -39,12 +41,10 @@ exports = async function(changeEvent) {
             to: 'whatsapp:+5511978486889'
           })
           .then(message => {
-            doc.twilioResponse = message;
+            // remove credit
           })
           .done();
     }
-
-    await collection.insertOne(doc);
   } catch(err) {
     console.log("error performing mongodb write: ", err.message);
   }
