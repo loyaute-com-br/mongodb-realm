@@ -65,7 +65,7 @@ exports = async function(changeEvent) {
           .create({
             body: body,
             from: 'whatsapp:+14155238886',
-            to: 'whatsapp:+5511978486889'
+            to: 'whatsapp:+55' + changeEvent.fullDocument.client_phone
           })
           .then(message => {
             // remove credit

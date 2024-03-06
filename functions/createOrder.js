@@ -94,6 +94,7 @@ exports = async function(request, response){
       let update = {
         $set: {
           "client": client.first_name,
+          "client_phone": client.phone,
           "establishment": establishment.name,
           "expiration_date": expiration,
         }
