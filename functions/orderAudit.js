@@ -46,18 +46,18 @@ exports = async function(changeEvent) {
 
       let body = changeEvent.fullDocument.client.toUpperCase() + ', você acumulou ' + formatBRL(changeEvent.fullDocument.balance) + ' de cashback na ' + changeEvent.fullDocument.establishment.toUpperCase() + ', válido até dia ' + (day + '/' + month + '/' + year) + '.'
 
-      const accountSid = 'ACe93600fa1b72475db93dc6a743cbb17d';
-      const authToken = '84986c410de24216a03c466c64ed116a';
-      const twilioClient = require('twilio')(accountSid, authToken);
-
-      twilioClient.messages
-          .create({
-            body: body,
-            from: '+18125788046',
-            to: '+55' + changeEvent.fullDocument.client_phone
-          })
-          .then(message => console.log(message.sid))
-          .done();
+      // const accountSid = 'ACe93600fa1b72475db93dc6a743cbb17d';
+      // const authToken = '84986c410de24216a03c466c64ed116a';
+      // const twilioClient = require('twilio')(accountSid, authToken);
+      //
+      // twilioClient.messages
+      //     .create({
+      //       body: body,
+      //       from: '+18125788046',
+      //       to: '+55' + changeEvent.fullDocument.client_phone
+      //     })
+      //     .then(message => console.log(message.sid))
+      //     .done();
     }
   } catch(err) {
     console.log("error performing mongodb write: ", err.message);
