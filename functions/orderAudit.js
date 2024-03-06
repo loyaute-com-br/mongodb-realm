@@ -1,7 +1,7 @@
-function formatarMoedaBRL(valor) {
-  var partes = valor.toFixed(2).split('.');
-  partes[0] = partes[0].split(/(?=(?:...)*$)/).join('.');
-  return 'R$ ' + partes.join(',');
+function formatBRL(valor) {
+  let parts = valor.toFixed(2).split('.');
+  parts[0] = parts[0].split(/(?=(?:...)*$)/).join('.');
+  return 'R$' + parts.join(',');
 }
 
 exports = async function(changeEvent) {
@@ -44,7 +44,7 @@ exports = async function(changeEvent) {
       let month = String(date.getMonth() + 1).padStart(2, '0'); // Os meses começam do zero
       let year = String(date.getFullYear()).slice(-2); // Pega os dois últimos dígitos do ano
 
-      let body = changeEvent.fullDocument.client.toUpperCase() + ', você acumulou ' + formatarMoedaBRL(changeEvent.fullDocument.balance) + ' de cashback na ' + changeEvent.fullDocument.establishment.toUpperCase() + ', válido até dia ' + (day + '/' + month + '/' + year) + '.'
+      let body = changeEvent.fullDocument.client.toUpperCase() + ', você acumulou ' + formatBRL(changeEvent.fullDocument.balance) + ' de cashback na ' + changeEvent.fullDocument.establishment.toUpperCase() + ', válido até dia ' + (day + '/' + month + '/' + year) + '.'
       // const client = await mongodb.db("clients").collection("clients").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.client_id) });
       //
       // if (!client) {
