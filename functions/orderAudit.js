@@ -31,7 +31,14 @@ exports = async function(changeEvent) {
     await collection.insertOne(doc);
 
     if(changeEvent.fullDocument.balance > 10) {
-      let body = changeEvent.fullDocument.client.toUpperCase() + ', você acumulou R$50,00 de cashback na ' + changeEvent.fullDocument.establishment.toUpperCase() + ', válido até dia ' + changeEvent.fullDocument.expiration_date + '. Fale diretamente com a loja pelo link: https://wa.me/5511978486889'
+      
+      let date = changeEvent.fullDocument.expiration_date
+
+      let day = String(date.getDate()).padStart(2, '0');
+      let month = String(date.getMonth() + 1).padStart(2, '0'); // Os meses começam do zero
+      let year = String(date.getFullYear()).slice(-2); // Pega os dois últimos dígitos do ano
+
+      let body = changeEvent.fullDocument.client.toUpperCase() + ', você acumulou R$50,00 de cashback na ' + changeEvent.fullDocument.establishment.toUpperCase() + ', válido até dia ' + (day + '/' + month + '/' + year) + '.'
       // const client = await mongodb.db("clients").collection("clients").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.client_id) });
       //
       // if (!client) {
