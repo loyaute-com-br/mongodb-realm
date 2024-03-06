@@ -15,6 +15,7 @@ exports = async function(request, response){
     }
 
     const clientsDB = context.services.get("mongodb-atlas").db("clients");
+    const establishmentsDB = context.services.get("mongodb-atlas").db("establishments");
 
     // Pipeline for transactions counting
     const transactionsPipeline = getTransactionsPipeline(body);
@@ -32,11 +33,11 @@ exports = async function(request, response){
     const averageTicketPipeline = getAverageTicketPipeline(body);
 
     // Execute aggregations
-    const transactionsResult = await executeAggregation(clientsDB, "orders", transactionsPipeline);
+    const transactionsResult = await executeAggregation(establishmentsDB, "orders", transactionsPipeline);
     const walletsResult = await executeAggregation(clientsDB, "wallets", walletsPipeline);
-    const duplicatedWalletsResult = await executeAggregation(clientsDB, "orders", duplicatedWalletsPipeline);
-    const recurringResult = await executeAggregation(clientsDB, "orders", recurringPipeline);
-    const averageTicketResult = await executeAggregation(clientsDB, "orders", averageTicketPipeline);
+    const duplicatedWalletsResult = await executeAggregation(establishmentsDB, "orders", duplicatedWalletsPipeline);
+    const recurringResult = await executeAggregation(establishmentsDB, "orders", recurringPipeline);
+    const averageTicketResult = await executeAggregation(establishmentsDB, "orders", averageTicketPipeline);
 
     // Return the results
     return {
