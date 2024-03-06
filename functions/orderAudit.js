@@ -31,13 +31,25 @@ exports = async function(changeEvent) {
     await collection.insertOne(doc);
  
     if(changeEvent.fullDocument.balance > 10) {
+      const client = await mongodb.db("clients").collection("clients").findOne({ "_id": changeEvent.fullDocument.client_id });
+
+      if (!client) {
+        return;
+      }
+
+      const establishment = await mongodb.db("establishments").collection("establishments").findOne({ "_id": changeEvent.fullDocument.establishment_id });
+
+      if (!establishment) {
+        return;
+      }
+
       const accountSid = 'AC35fb7c08c4ba66c7f92e7c6d235eddcd';
       const authToken = 'e9175cbb0e7a3872332c227c312380b3';
-      const client = require('twilio')(accountSid, authToken);
+      const twilioClient = require('twilio')(accountSid, authToken);
 
-      client.messages
+      twilioClient.messages
           .create({
-            body: 'GUILHERME, você acumulou R$50,00 de cashback na ÓTICA CAMBUÍ, válido até dia 06/04/24. Fale diretamente com a loja pelo link: https://wa.me/5511978486889',
+            body: client.name.upper + ', você acumulou R$50,00 de cashback na ' + establishment.name.upper + ', válido até dia ' + changeEvent.fullDocument.expiration_date + '. Fale diretamente com a loja pelo link: https://wa.me/5511978486889',
             from: 'whatsapp:+14155238886',
             to: 'whatsapp:+5511978486889'
           })
