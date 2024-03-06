@@ -38,7 +38,7 @@ exports = async function(changeEvent) {
       let month = String(date.getMonth() + 1).padStart(2, '0'); // Os meses começam do zero
       let year = String(date.getFullYear()).slice(-2); // Pega os dois últimos dígitos do ano
 
-      let body = changeEvent.fullDocument.client.toUpperCase() + ', você acumulou R$' + changeEvent.fullDocument.balance + ' de cashback na ' + changeEvent.fullDocument.establishment.toUpperCase() + ', válido até dia ' + (day + '/' + month + '/' + year) + '.'
+      let body = changeEvent.fullDocument.client.toUpperCase() + ', você acumulou ' + changeEvent.fullDocument.balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + ' de cashback na ' + changeEvent.fullDocument.establishment.toUpperCase() + ', válido até dia ' + (day + '/' + month + '/' + year) + '.'
       // const client = await mongodb.db("clients").collection("clients").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.client_id) });
       //
       // if (!client) {
