@@ -10,7 +10,7 @@ exports = async function(changeEvent) {
   // Get the MongoDB service you want to use (see "Linked Data Sources" tab)
   // Note: In Atlas Triggers, the service name is defaulted to the cluster name.
   const serviceName = "mongodb-atlas";
-  const database = "clients";
+  const database = "establishments";
   const collection = context.services.get(serviceName).db(database).collection("transactions");
 
   // Get the "FullDocument" present in the Insert/Replace/Update ChangeEvents
