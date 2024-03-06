@@ -93,7 +93,9 @@ exports = async function(request, response){
 
       let update = {
         $set: {
-          "expiration_date": expiration
+          "expiration_date": expiration,
+          "client": client.first_name,
+          "establishment": establishment.name,
         }
       };
 
@@ -114,9 +116,7 @@ exports = async function(request, response){
       let doc = {
         "wallet_id": wallet._id,
         "client_id": client._id,
-        "client_name": client.first_name,
         "establishment_id": wallet.establishment_id,
-        "establishment_name": establishment.name,
         "timeStamp": new Date(),
         "balance": {
           "new": updatedWallet.balance,
