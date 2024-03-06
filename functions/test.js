@@ -1,12 +1,5 @@
-const axios = require('axios');
-
 exports = async function() {
-    const url = 'https://api.example.com/data';
-    try {
-        const response = await axios.get(url);
-        return response.data;
-    } catch (error) {
-        console.error('Error:', error);
-        return { error: error.message };
-    }
+  const response = await context.http.get({ url: "https://www.example.com/users" })
+  // The response body is a BSON.Binary object. Parse it and return.
+  return EJSON.parse(response.body.text());
 };
