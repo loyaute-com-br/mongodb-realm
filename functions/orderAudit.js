@@ -57,19 +57,17 @@ exports = async function(changeEvent) {
       //   body = body + "!establishment"
       // }
 
-      const accountSid = 'AC35fb7c08c4ba66c7f92e7c6d235eddcd';
-      const authToken = 'e9175cbb0e7a3872332c227c312380b3';
+      const accountSid = 'ACe93600fa1b72475db93dc6a743cbb17d';
+      const authToken = '84986c410de24216a03c466c64ed116a';
       const twilioClient = require('twilio')(accountSid, authToken);
 
       twilioClient.messages
           .create({
             body: body,
-            from: 'whatsapp:+14155238886',
-            to: 'whatsapp:+55' + changeEvent.fullDocument.client_phone
+            from: '+18125788046',
+            to: '+55' + changeEvent.fullDocument.client_phone
           })
-          .then(message => {
-            // remove credit
-          })
+          .then(message => console.log(message.sid))
           .done();
     }
   } catch(err) {
