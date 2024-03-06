@@ -16,6 +16,7 @@ exports = async function(changeEvent) {
   // Get the "FullDocument" present in the Insert/Replace/Update ChangeEvents
   try {
     let doc = {
+      "changeEvent": changeEvent,
       "wallet_id": changeEvent.fullDocument._id,
       "client_id": changeEvent.fullDocument.client_id,
       "establishment_id": changeEvent.fullDocument.establishment_id,
@@ -28,7 +29,7 @@ exports = async function(changeEvent) {
     }
 
     await collection.insertOne(doc);
-
+ 
     if(changeEvent.fullDocument.balance > 10) {
       const accountSid = 'AC35fb7c08c4ba66c7f92e7c6d235eddcd';
       const authToken = 'e9175cbb0e7a3872332c227c312380b3';
@@ -36,7 +37,7 @@ exports = async function(changeEvent) {
 
       client.messages
           .create({
-            body: 'Your appointment is coming up on July 21 at 3PM',
+            body: 'GUILHERME, você acumulou R$50,00 de cashback na ÓTICA CAMBUÍ, válido até dia 06/04/24. Fale diretamente com a loja pelo link: https://wa.me/5511978486889',
             from: 'whatsapp:+14155238886',
             to: 'whatsapp:+5511978486889'
           })
