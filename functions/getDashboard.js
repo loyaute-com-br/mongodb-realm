@@ -32,11 +32,11 @@ exports = async function(request, response){
     const averageTicketPipeline = getAverageTicketPipeline(body);
 
     // Execute aggregations
-    const transactionsResult = await executeAggregation(clientsDB, "transactions", transactionsPipeline);
+    const transactionsResult = await executeAggregation(clientsDB, "orders", transactionsPipeline);
     const walletsResult = await executeAggregation(clientsDB, "wallets", walletsPipeline);
-    const duplicatedWalletsResult = await executeAggregation(clientsDB, "transactions", duplicatedWalletsPipeline);
-    const recurringResult = await executeAggregation(clientsDB, "transactions", recurringPipeline);
-    const averageTicketResult = await executeAggregation(clientsDB, "transactions", averageTicketPipeline);
+    const duplicatedWalletsResult = await executeAggregation(clientsDB, "orders", duplicatedWalletsPipeline);
+    const recurringResult = await executeAggregation(clientsDB, "orders", recurringPipeline);
+    const averageTicketResult = await executeAggregation(clientsDB, "orders", averageTicketPipeline);
 
     // Return the results
     return {
@@ -154,7 +154,7 @@ function getRecurringPipeline(body) {
     },
     {
       $lookup: {
-        from: "transactions",
+        from: "orders",
         localField: "_id",
         foreignField: "wallet_id",
         as: "allTransactions"

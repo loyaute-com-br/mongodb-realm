@@ -128,7 +128,7 @@ exports = async function(request, response){
         "cashback_status": cashbackStatus,
       }
 
-      await database.collection("transactions").insertOne(doc);
+      await database.collection("orders").insertOne(doc);
     }, transactionOptions);
 
     // Comitar a transação

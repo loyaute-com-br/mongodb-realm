@@ -11,7 +11,7 @@ exports = async function(changeEvent) {
   // Note: In Atlas Triggers, the service name is defaulted to the cluster name.
   const serviceName = "mongodb-atlas";
   const database = "establishments";
-  const collection = context.services.get(serviceName).db(database).collection("orders");
+  const collection = context.services.get(serviceName).db(database).collection("transactions");
 
   // Get the "FullDocument" present in the Insert/Replace/Update ChangeEvents
   try {
