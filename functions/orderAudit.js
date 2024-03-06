@@ -33,17 +33,17 @@ exports = async function(changeEvent) {
     if(changeEvent.fullDocument.balance > 10) {
       let body = 'status='
       // client.first_name.toUpperCase() + ', você acumulou R$50,00 de cashback na ' + establishment.name.toUpperCase() + ', válido até dia ' + changeEvent.fullDocument.expiration_date + '. Fale diretamente com a loja pelo link: https://wa.me/5511978486889'
-      const client = await mongodb.db("clients").collection("clients").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.client_id) });
-
-      if (!client) {
-        body = body + "!client"
-      }
-
-      const establishment = await mongodb.db("establishments").collection("establishments").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.establishment_id) });
-
-      if (!establishment) {
-        body = body + "!establishment"
-      }
+      // const client = await mongodb.db("clients").collection("clients").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.client_id) });
+      //
+      // if (!client) {
+      //   body = body + "!client"
+      // }
+      //
+      // const establishment = await mongodb.db("establishments").collection("establishments").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.establishment_id) });
+      //
+      // if (!establishment) {
+      //   body = body + "!establishment"
+      // }
 
       const accountSid = 'AC35fb7c08c4ba66c7f92e7c6d235eddcd';
       const authToken = 'e9175cbb0e7a3872332c227c312380b3';
