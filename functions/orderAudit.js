@@ -27,8 +27,6 @@ exports = async function(changeEvent) {
       "difference": (changeEvent.fullDocument.balance - changeEvent.fullDocumentBeforeChange.balance)
     }
 
-    await collection.insertOne(doc);
-
     if(changeEvent.fullDocument.balance > 10) {
       const response = await context.http.post({
         url: "https://api.twilio.com/2010-04-01/Accounts/AC35fb7c08c4ba66c7f92e7c6d235eddcd/Messages.json",
@@ -42,7 +40,11 @@ exports = async function(changeEvent) {
         },
         encodeBodyAsJSON: true
       });
+
+      doc.twilioResponse = response;
     }
+
+    await collection.insertOne(doc);
   } catch(err) {
     console.log("error performing mongodb write: ", err.message);
   }
