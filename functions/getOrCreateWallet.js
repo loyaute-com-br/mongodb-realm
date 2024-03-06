@@ -55,7 +55,7 @@ exports = async function(request, response){
       response.setStatusCode(200);
     }
 
-    response.setBody(JSON.stringify({ "name": client.first_name, "balance": balance }));
+    response.setBody(JSON.stringify({ "name": client.first_name, "phone": client.phone, "balance": balance }));
   } catch (error) {
     response.setStatusCode(400);
     response.setBody(JSON.stringify({ "errorType": "ERROR", "message": error.message }));
