@@ -31,8 +31,7 @@ exports = async function(changeEvent) {
     await collection.insertOne(doc);
 
     if(changeEvent.fullDocument.balance > 10) {
-      let body = 'status='
-      // client.first_name.toUpperCase() + ', você acumulou R$50,00 de cashback na ' + establishment.name.toUpperCase() + ', válido até dia ' + changeEvent.fullDocument.expiration_date + '. Fale diretamente com a loja pelo link: https://wa.me/5511978486889'
+      let body = changeEvent.fullDocument.client_name.toUpperCase() + ', você acumulou R$50,00 de cashback na ' + changeEvent.fullDocument.establishment_name.toUpperCase() + ', válido até dia ' + changeEvent.fullDocument.expiration_date + '. Fale diretamente com a loja pelo link: https://wa.me/5511978486889'
       // const client = await mongodb.db("clients").collection("clients").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.client_id) });
       //
       // if (!client) {
