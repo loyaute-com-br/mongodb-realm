@@ -28,20 +28,20 @@ exports = async function(changeEvent) {
     }
 
     if(changeEvent.fullDocument.balance > 10) {
-      const response = await context.http.post({
-        url: "https://api.twilio.com/2010-04-01/Accounts/AC35fb7c08c4ba66c7f92e7c6d235eddcd/Messages.json",
-        body: {
-          To: "whatsapp:+5511978486889",
-          From: "whatsapp:+14155238886",
-          Body: "Your appointment is coming up on July 21 at 3PM"
-        },
-        headers: {
-          Authorization: "Basic " + btoa("AC35fb7c08c4ba66c7f92e7c6d235eddcd:e9175cbb0e7a3872332c227c312380b3")
-        },
-        encodeBodyAsJSON: true
-      });
+      const accountSid = 'AC35fb7c08c4ba66c7f92e7c6d235eddcd';
+      const authToken = 'e9175cbb0e7a3872332c227c312380b3';
+      const client = require('twilio')(accountSid, authToken);
 
-      doc.twilioResponse = response;
+      client.messages
+          .create({
+            body: 'Your appointment is coming up on July 21 at 3PM',
+            from: 'whatsapp:+14155238886',
+            to: 'whatsapp:+5511978486889'
+          })
+          .then(message => {
+            doc.twilioResponse = message;
+          })
+          .done();
     }
 
     await collection.insertOne(doc);
