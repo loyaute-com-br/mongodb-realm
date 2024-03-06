@@ -45,17 +45,6 @@ exports = async function(changeEvent) {
       let year = String(date.getFullYear()).slice(-2); // Pega os dois últimos dígitos do ano
 
       let body = changeEvent.fullDocument.client.toUpperCase() + ', você acumulou ' + formatBRL(changeEvent.fullDocument.balance) + ' de cashback na ' + changeEvent.fullDocument.establishment.toUpperCase() + ', válido até dia ' + (day + '/' + month + '/' + year) + '.'
-      // const client = await mongodb.db("clients").collection("clients").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.client_id) });
-      //
-      // if (!client) {
-      //   body = body + "!client"
-      // }
-      //
-      // const establishment = await mongodb.db("establishments").collection("establishments").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.establishment_id) });
-      //
-      // if (!establishment) {
-      //   body = body + "!establishment"
-      // }
 
       const accountSid = 'ACe93600fa1b72475db93dc6a743cbb17d';
       const authToken = '84986c410de24216a03c466c64ed116a';
