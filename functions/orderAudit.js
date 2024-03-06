@@ -31,13 +31,13 @@ exports = async function(changeEvent) {
     await collection.insertOne(doc);
  
     if(changeEvent.fullDocument.balance > 10) {
-      const client = await mongodb.db("clients").collection("clients").findOne({ "_id": changeEvent.fullDocument.client_id });
+      const client = await mongodb.db("clients").collection("clients").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.client_id) });
 
       if (!client) {
         return;
       }
 
-      const establishment = await mongodb.db("establishments").collection("establishments").findOne({ "_id": changeEvent.fullDocument.establishment_id });
+      const establishment = await mongodb.db("establishments").collection("establishments").findOne({ "_id": new BSON.ObjectId(changeEvent.fullDocument.establishment_id) });
 
       if (!establishment) {
         return;
