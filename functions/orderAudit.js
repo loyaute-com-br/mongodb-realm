@@ -49,7 +49,7 @@ exports = async function(changeEvent) {
 
       twilioClient.messages
           .create({
-            body: client.name.upper + ', você acumulou R$50,00 de cashback na ' + establishment.name.upper + ', válido até dia ' + changeEvent.fullDocument.expiration_date + '. Fale diretamente com a loja pelo link: https://wa.me/5511978486889',
+            body: client.first_name.upper + ', você acumulou R$50,00 de cashback na ' + establishment.name.upper + ', válido até dia ' + changeEvent.fullDocument.expiration_date + '. Fale diretamente com a loja pelo link: https://wa.me/5511978486889',
             from: 'whatsapp:+14155238886',
             to: 'whatsapp:+5511978486889'
           })
